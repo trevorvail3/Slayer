@@ -28,6 +28,7 @@ func _unhandled_input(event: InputEvent) -> void:
 var _row: HBoxContainer
 
 func _build() -> void:
+	theme = UITheme.get_theme()
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
 

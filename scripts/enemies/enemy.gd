@@ -76,7 +76,7 @@ func _configure() -> void:
 			windup_time = 0.6
 			attack_cooldown = 1.8
 			knockback_resist = 0.6
-			base_color = Color("6e2b2b")
+			base_color = Color("6e3b2b")   # iron-blooded champion
 			body_scale = 1.5
 		Kind.ARCHER:
 			max_health = 22 + power * 2
@@ -85,13 +85,13 @@ func _configure() -> void:
 			windup_time = 0.5
 			attack_cooldown = 2.0
 			is_ranged = true
-			base_color = Color("2f7d8c")
+			base_color = Color("6a7048")   # olive-cloaked skirmisher
 			body_scale = 0.95
 		_:
 			max_health = 30 + power * 3
 			move_speed = 3.0
 			contact_damage = 5 + power
-			base_color = Color("8d3b3b")
+			base_color = Color("8a6a3a")   # bronze-and-leather levy
 
 	if is_boss:
 		max_health = 600 + power * 12
@@ -101,7 +101,7 @@ func _configure() -> void:
 		attack_cooldown = 1.6
 		knockback_resist = 0.9
 		body_scale = 2.3
-		base_color = Color("b8860b")
+		base_color = Color("b89040")   # a bronze-crowned war-king
 
 	if world_boss:
 		max_health = 1600 + power * 20
@@ -109,7 +109,7 @@ func _configure() -> void:
 		move_speed = 2.2
 		knockback_resist = 0.95
 		body_scale = 3.2
-		base_color = Color("c0392b")
+		base_color = Color("cfc8b0")   # the Bone-Titan: pale stone and marrow
 
 func _build() -> void:
 	var s := body_scale
@@ -120,6 +120,7 @@ func _build() -> void:
 	_mat.roughness = 0.85
 	_mat.rim_enabled = true
 	_mat.rim = 0.5
+	_mat.next_pass = Toon.outline(0.03 * body_scale)
 
 	# Humanoid rig (visual only) parented to _body for facing + death topple.
 	_body = Node3D.new()
@@ -193,6 +194,7 @@ func _add_prop(s: float) -> void:
 		_:
 			box.size = Vector3(0.08, 0.08, 0.85) * s
 			pmat.albedo_color = Color("cfd4de")
+	pmat.next_pass = Toon.outline(0.02 * s)
 	prop.mesh = box
 	prop.material_override = pmat
 	prop.position = Vector3(0, -0.72 * s, -0.35 * s)   # in the right hand, pointing forward

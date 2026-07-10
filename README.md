@@ -26,10 +26,13 @@ The wilds are now *alive*. An activity **director** rotates through:
 The top-center banner tracks whatever's happening. Everything else (classes, weapons,
 town, save) carries over.
 
-**Polish pass:** enemies are now **humanoid figures** that walk, telegraph, and topple
-over on death (no more capsules); hits throw **sparks**; the camera **head-bobs**; and
-both scenes get a filmic, bloom-lit color grade. The lore foundation — a **World Bible**
-— now lives in `docs/lore/` (setting, the Blight, the Bastion, the orders, bosses).
+**Polish pass:** enemies are **humanoid figures** that walk, telegraph, and topple over
+on death; hits throw **sparks**; the camera **head-bobs**; a filmic, bloom-lit color
+grade; **toon outlines** on characters/weapons; and a shared **bronze-parchment UI theme**
+on every menu. The world is now **mythic Aldermoor** ("300 in a Destiny game") — a
+grounded bronze-age land that is literally the body of a slain god. Full lore in
+`docs/lore/` (start at *World Bible (Home)*): the creation myth, the faiths & schism,
+the city-state factions, the orders (classes), the **Bone-Titan**, and more.
 
 Built on: v0.6 classes & Supers, v0.5 weapon archetypes, v0.4 hub town + save/load, v0.3 Slice Zone, v0.2 combat feel, v0.1 loot loop.
 

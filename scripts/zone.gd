@@ -45,7 +45,7 @@ func _process(delta: float) -> void:
 			if _event_time <= 0.0:
 				_end_event(false)
 			else:
-				hud.set_objective("⚔ BLOOD SURGE — slay %d/%d   (%s)" % [_event_kills, _event_target, _fmt(_event_time)])
+				hud.set_objective("⚔ WARBAND ASSAULT — slay %d/%d   (%s)" % [_event_kills, _event_target, _fmt(_event_time)])
 		Phase.BOSS:
 			pass   # transition handled by the boss's died signal
 
@@ -63,7 +63,7 @@ func _begin_event() -> void:
 	_event_time = 45.0
 	_max_enemies = 10
 	_power_bonus = 6
-	hud.set_objective("⚔ BLOOD SURGE begins — cut them down!")
+	hud.set_objective("⚔ WARBAND ASSAULT — a host descends! Hold the ground!")
 
 func _end_event(success: bool) -> void:
 	_phase = Phase.AMBIENT
@@ -72,9 +72,9 @@ func _end_event(success: bool) -> void:
 	_phase_timer = 25.0
 	if success:
 		_spawn_reward_chest()
-		hud.set_objective("★ Blood Surge repelled — loot dropped near you!")
+		hud.set_objective("★ Warband broken — spoils dropped near you!")
 	else:
-		hud.set_objective("The surge subsides… hold for the next.")
+		hud.set_objective("The host melts away… ready yourself for the next.")
 
 func _begin_boss() -> void:
 	_phase = Phase.BOSS
@@ -87,7 +87,7 @@ func _begin_boss() -> void:
 	_boss.died.connect(_on_boss_died)
 	_boss.position = Vector3(0, 5, -ARENA_HALF + 10.0)
 	add_child(_boss)
-	hud.set_objective("⚠ WORLD BOSS — THE COLOSSUS has arrived!")
+	hud.set_objective("⚠ THE BONE-TITAN WAKES — a bone of the Father walks!")
 
 func _on_boss_died(_enemy: Enemy) -> void:
 	_boss = null
@@ -96,7 +96,7 @@ func _on_boss_died(_enemy: Enemy) -> void:
 	_phase_timer = 30.0
 	_spawn_reward_chest()
 	GameState.add_relic()   # bonus relic for the kill
-	hud.set_objective("★ THE COLOSSUS FALLS — claim the spoils!")
+	hud.set_objective("★ THE BONE-TITAN FALLS — claim the spoils!")
 
 func _spawn_reward_chest() -> void:
 	var chest := Chest.new()

@@ -108,3 +108,13 @@ grounded **bronze-age / mythic-Greek** world of feuding **city-states**.
 - Rewrote all `docs/lore/` notes + added Creation Myth, Faiths & Schism, Factions,
   Regions & City-States, Bestiary, and The Dead & the Ossuary Cult.
 
+## Polish finish (lore-integrated)
+Completed the deferred polish and pushed the lore into the game's surfaces:
+- **Toon outlines** — `scripts/fx/toon.gd` inverted-hull `next_pass` material (no custom
+  shader) on enemy rigs, held props, and the player's weapon.
+- **UI theme** — `scripts/ui/ui_theme.gd`, a shared bronze-parchment `Theme` applied to
+  every menu (inventory, blacksmith, vault, class select).
+- **Lore reflavor** — enemy tints → bronze-age (levy/champion/skirmisher, bronze war-king,
+  pale **Bone-Titan**); world-boss banner → "The Bone-Titan wakes"; public event →
+  "Warband Assault"; class blurbs tied to the orders (Bulwark/Veiled/Ember-Marked).
+

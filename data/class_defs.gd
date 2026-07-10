@@ -11,7 +11,7 @@ static func get_def(k: int) -> Dictionary:
 		Kind.STALKER:
 			return {
 				"name": "Stalker", "color": Color("6ad06a"),
-				"blurb": "Agile skirmisher. Dodge through danger, seed the ground with caltrops, and unleash a Blade Storm.",
+				"blurb": "The Veiled. Vael struck once, from the dark, and made the world — so do you. Dodge the blow, seed caltrops, and become a Blade Storm.",
 				"move_name": "Dodge", "move_cd": 3.5,
 				"ability_name": "Caltrops", "ability_cd": 12.0,
 				"super_name": "Blade Storm",
@@ -19,7 +19,7 @@ static func get_def(k: int) -> Dictionary:
 		Kind.RUNECASTER:
 			return {
 				"name": "Runecaster", "color": Color("b060ff"),
-				"blurb": "Mystic. Blink across the field, drop a healing Rift, and call down a Meteor Storm.",
+				"blurb": "The Ember-Marked. Carry the old sacred fire. Blink the rune-path, mend with a Rift, and call the gods' Meteor Storm.",
 				"move_name": "Blink", "move_cd": 5.0,
 				"ability_name": "Runic Rift", "ability_cd": 16.0,
 				"super_name": "Meteor Storm",
@@ -27,7 +27,7 @@ static func get_def(k: int) -> Dictionary:
 		_:
 			return {
 				"name": "Warden", "color": Color("6a9aff"),
-				"blurb": "Immovable bulwark. Dash into the fray, raise a Barricade, and detonate a Ground Slam.",
+				"blurb": "The Bulwark. Immovable as the Father's bones. Dash into the line, raise a Barricade, and detonate a Ground Slam.",
 				"move_name": "Shoulder Dash", "move_cd": 4.0,
 				"ability_name": "Barricade", "ability_cd": 14.0,
 				"super_name": "Ground Slam",

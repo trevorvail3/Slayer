@@ -150,6 +150,7 @@ func _box(size: Vector3, pos: Vector3, color: Color) -> MeshInstance3D:
 	mat.emission_enabled = true
 	mat.emission = color
 	mat.emission_energy_multiplier = 0.4
+	mat.next_pass = Toon.outline(0.006)
 	m.material_override = mat
 	m.position = pos
 	return m
