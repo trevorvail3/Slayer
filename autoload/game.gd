@@ -14,6 +14,20 @@ func _ready() -> void:
 	if SaveManager.has_save():
 		SaveManager.load_game()
 
+## Start a fresh character with the chosen class, then enter the town.
+func new_game(class_kind: int) -> void:
+	GameState.reset_new_game(class_kind)
+	SaveManager.save_game()
+	menu_open = false
+	get_tree().change_scene_to_file(HUB_SCENE)
+
+## Resume the loaded save (already loaded on boot) and enter the town.
+func continue_game() -> void:
+	if SaveManager.has_save():
+		SaveManager.load_game()
+	menu_open = false
+	get_tree().change_scene_to_file(HUB_SCENE)
+
 func goto_hub() -> void:
 	SaveManager.save_game()
 	menu_open = false

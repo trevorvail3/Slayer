@@ -43,6 +43,24 @@ func _equip_starter_gear() -> void:
 		equipped[slot] = it
 	equipment_changed.emit()
 
+## Wipe progress for a brand-new character (New Game): clear gear/inventory/town/
+## resources, set the chosen class, and re-equip rusty starter gear.
+func reset_new_game(class_kind: int) -> void:
+	Catalog.ensure_built()
+	backpack.clear()
+	stash.clear()
+	equipped.clear()
+	resources = {"wood": 0, "stone": 0, "iron": 0, "emberdust": 0, "godshard": 0}
+	gold = 0
+	town = {}
+	relics_found = 0
+	player_class = class_kind
+	_equip_starter_gear()
+	backpack_changed.emit()
+	resources_changed.emit()
+	town_changed.emit()
+	class_changed.emit()
+
 # --- Inventory ---
 
 func add_to_backpack(item: ItemData) -> void:

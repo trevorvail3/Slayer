@@ -160,3 +160,19 @@ Forge real *targeting* so a great item is something you can build toward, not ju
   focus guarantee, and quality bounds.
 - *Deferred:* **Nemesis war-kings** (the emergent-rival half of v0.9) → tracked as v0.9b.
 
+## Art pipeline + UI overhaul (in progress)
+Groundwork to make it read like a real game (see [[Art Pipeline]]).
+- **Optional-asset pipeline** — `AssetLoader` (auto-loaded HDRI skies + ground
+  textures, auto-fitted models with safe fallbacks). First CC0 art shipped:
+  Kiara Dawn sky (town + wilds) and an animated Fox wired to the BEAST enemy.
+- **UI overhaul — Phase 1 (start menu + intro):**
+  - New **dark-glass + bronze** `UITheme` (palette constants + styleboxes) — the
+    whole menu set re-skins from this one file.
+  - **Main menu** is now the boot scene (`scenes/main_menu.tscn`): New Game /
+    Continue / Quit. Class selection moved to a Destiny-style **character
+    creation** screen (`character_create.gd`); the in-town Shrine stays as respec.
+  - **Story intro** (`story_intro.gd`) — the creation myth as a fading opening
+    after New Game, then into the world.
+  - `Game.new_game(kind)` / `continue_game()` + `GameState.reset_new_game()`.
+  - *Next phases:* HUD overhaul, in-menu polish pass, in-world guided-steps tutorial.
+
