@@ -52,11 +52,10 @@ func _ready() -> void:
 
 	var label := Label3D.new()
 	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-	label.no_depth_test = true
-	label.fixed_size = true
-	label.font_size = 40
-	label.outline_size = 10
-	label.position.y = 3.4
+	label.font_size = 48
+	label.outline_size = 8
+	label.pixel_size = 0.007
+	label.position.y = 3.6
 	label.text = "TO THE WILDS" if to_zone else "RETURN TO TOWN"
 	add_child(label)
 

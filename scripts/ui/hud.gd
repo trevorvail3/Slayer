@@ -74,8 +74,10 @@ func _build() -> void:
 	root.add_child(toast)
 
 	objective_label = Label.new()
-	objective_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
-	objective_label.position += Vector2(-180, 20)
+	objective_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	objective_label.offset_top = 54
+	objective_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	objective_label.add_theme_font_size_override("font_size", 22)
 	objective_label.add_theme_color_override("font_color", Color("e6c86a"))
 	objective_label.text = ""
@@ -83,7 +85,10 @@ func _build() -> void:
 
 	resource_label = Label.new()
 	resource_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	resource_label.position = Vector2(-430, 18)
+	resource_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	resource_label.position = Vector2(-20, 18)
+	resource_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	resource_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	resource_label.add_theme_font_size_override("font_size", 18)
 	resource_label.add_theme_color_override("font_color", Color("e6d29a"))
 	resource_label.text = ""
