@@ -46,6 +46,12 @@ func _build_environment() -> void:
 	skymat.ground_horizon_color = Color("6a6250")
 	sky.sky_material = skymat
 	env.sky = sky
+	# Optional: a real HDRI photo sky, if one is dropped in assets/skies/ as hub.*
+	var real_sky := AssetLoader.load_panorama_sky(AssetLoader.first_existing([
+		"res://assets/skies/hub.hdr", "res://assets/skies/hub.exr",
+		"res://assets/skies/hub.png", "res://assets/skies/hub.jpg"]))
+	if real_sky != null:
+		env.sky = real_sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.ambient_light_energy = 0.75
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
@@ -60,7 +66,9 @@ func _build_environment() -> void:
 	add_child(we)
 
 func _build_ground() -> void:
-	_static_box(Vector3(0, -0.5, 0), Vector3(GROUND_HALF * 2, 1, GROUND_HALF * 2), Color("4a6b3a"))
+	var ground := _static_box(Vector3(0, -0.5, 0), Vector3(GROUND_HALF * 2, 1, GROUND_HALF * 2), Color("4a6b3a"))
+	# Optional: tiling grass/dirt texture if dropped in assets/textures/ground_town.png
+	AssetLoader.apply_ground_texture(ground, "res://assets/textures/ground_town.png", 8.0)
 	# Plaza stone tile in the middle.
 	_static_box(Vector3(0, 0.01, -2), Vector3(22, 0.1, 16), Color("7d7566"))
 	# A little well/monument at town center.

@@ -287,6 +287,12 @@ func _build_environment() -> void:
 	skymat.ground_bottom_color = Color("241f1d")
 	sky.sky_material = skymat
 	env.sky = sky
+	# Optional: a real HDRI photo sky, if one is dropped in assets/skies/ as zone.*
+	var real_sky := AssetLoader.load_panorama_sky(AssetLoader.first_existing([
+		"res://assets/skies/zone.hdr", "res://assets/skies/zone.exr",
+		"res://assets/skies/zone.png", "res://assets/skies/zone.jpg"]))
+	if real_sky != null:
+		env.sky = real_sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.ambient_light_energy = 0.5
 	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
@@ -308,7 +314,11 @@ func _build_terrain() -> void:
 	for r in regions:
 		var size := Vector3(r.rect.size.x, 1.0, r.rect.size.y)
 		var center := r.center() + Vector3(0, -0.5, 0)
-		_static_box(center, size, r.ground_color)
+		var plate := _static_box(center, size, r.ground_color)
+		# Optional per-region ground texture: assets/textures/ground_<id>.png
+		# (ground_plains.png, ground_wood.png, ground_road.png, ground_barrow.png,
+		#  ground_foothills.png). Falls back to the flat ground_color if absent.
+		AssetLoader.apply_ground_texture(plate, "res://assets/textures/ground_%s.png" % r.id, 12.0)
 
 	var wall_c := Color("4b4b52")
 	_static_box(Vector3(0, 4, -MAP_HALF), Vector3(MAP_HALF * 2, 8, 2), wall_c)

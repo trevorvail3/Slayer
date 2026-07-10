@@ -61,6 +61,12 @@ A map of the codebase so the vault documents the code, not just the vision.
 - `world/travel_pad.gd` — Hub↔Zone pad.
 - `world/chest.gd` — world loot chest.
 - `fx/health_bar_3d.gd`, `fx/damage_number.gd`.
+- `fx/asset_loader.gd` — `AssetLoader`, the optional-art loader (see [[Art Pipeline]]).
+  Static helpers that return null/false when a file is absent so the game keeps
+  running on procedural primitives: `instance_model`, `load_texture`,
+  `load_panorama_sky`, `apply_ground_texture`, `find_anim_player`, `play_anim`.
+  Auto-loaded hooks live in `hub.gd`/`zone.gd` `_build_environment` (HDRI sky from
+  `assets/skies/`) and ground builders (tiling textures from `assets/textures/`).
 - `ui/hud.gd`, `ui/inventory_ui.gd`, `ui/blacksmith_ui.gd`, `ui/vault_ui.gd`.
 
 ## Scenes (`scenes/`)
