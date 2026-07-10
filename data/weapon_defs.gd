@@ -43,7 +43,7 @@ static func get_def(t: int) -> Dictionary:
 		ItemData.WeaponType.BOW:
 			return {
 				"ranged": true, "charge": true, "sweep": false, "bleed": false,
-				"dmg_mult": 2.0, "cooldown": 0.25, "windup": 0.0, "range": 60.0, "stamina": 12.0,
+				"dmg_mult": 1.5, "cooldown": 0.25, "windup": 0.0, "range": 60.0, "stamina": 12.0,
 				"anim": "aim", "color": Color("8a5a32"),
 				"rest_pos": Vector3(0.20, -0.22, -0.52), "rest_rot": Vector3(0, 10, 8),
 				"windup_rot": Vector3.ZERO, "strike_rot": Vector3.ZERO,
@@ -51,7 +51,7 @@ static func get_def(t: int) -> Dictionary:
 		ItemData.WeaponType.CROSSBOW:
 			return {
 				"ranged": true, "charge": false, "sweep": false, "bleed": false,
-				"dmg_mult": 1.4, "cooldown": 0.55, "windup": 0.0, "range": 60.0, "stamina": 10.0,
+				"dmg_mult": 0.7, "cooldown": 0.55, "windup": 0.0, "range": 60.0, "stamina": 10.0,
 				"anim": "aim", "color": Color("7a6a52"),
 				"rest_pos": Vector3(0.24, -0.26, -0.48), "rest_rot": Vector3(0, 4, 0),
 				"windup_rot": Vector3.ZERO, "strike_rot": Vector3.ZERO,
@@ -59,8 +59,10 @@ static func get_def(t: int) -> Dictionary:
 		_:  # SWORD (and NONE/default)
 			return {
 				"ranged": false, "charge": false, "sweep": false, "bleed": false,
-				"dmg_mult": 1.0, "cooldown": 0.42, "windup": 0.13, "range": 3.0, "stamina": 12.0,
+				"dmg_mult": 1.0, "cooldown": 0.5, "windup": 0.19, "range": 3.2, "stamina": 12.0,
 				"anim": "slash", "color": Color("d6dae4"),
-				"rest_pos": Vector3(0.33, -0.40, -0.55), "rest_rot": Vector3(52, 18, 8),
-				"windup_rot": Vector3(80, 55, 24), "strike_rot": Vector3(16, -44, -40),
+				# A wide diagonal slash: cocked over the right shoulder, then carved
+				# down and across the body to a low-left follow-through (~150° sweep).
+				"rest_pos": Vector3(0.33, -0.38, -0.55), "rest_rot": Vector3(34, 22, 12),
+				"windup_rot": Vector3(-28, 78, 40), "strike_rot": Vector3(48, -80, -60),
 			}

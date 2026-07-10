@@ -12,13 +12,13 @@ func play(amount: int, is_crit: bool) -> void:
 	if is_crit:
 		text = "%d!" % amount
 		modulate = Color(1.0, 0.82, 0.2)
-		font_size = 130
-		outline_size = 24
+		font_size = 88
+		outline_size = 16
 	else:
 		text = str(amount)
 		modulate = Color(1, 1, 1)
-		font_size = 90
-		outline_size = 16
+		font_size = 60
+		outline_size = 12
 
 	var start_y := position.y
 	# Slight horizontal scatter so stacked hits don't overlap perfectly.
