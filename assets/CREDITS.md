@@ -3,8 +3,9 @@
 Third-party art bundled in `assets/`. Keep this file updated as assets are added.
 
 ## Skies (`assets/skies/`)
-- **zone.hdr** — "Venice Sunset" · **CC0** (public domain) · from HDRI Haven / Poly Haven,
-  via the three.js sample-asset mirror. No attribution required.
+- **zone.hdr** — "Kiara 1 Dawn" · **CC0** (public domain) · from Poly Haven,
+  via the pmndrs/drei-assets mirror. Golden dawn over open hills — no man-made
+  clutter. No attribution required.
 - **hub.hdr** — "Spruit Sunrise" · **CC0** (public domain) · from HDRI Haven / Poly Haven,
   via the three.js sample-asset mirror. No attribution required.
 
