@@ -50,7 +50,7 @@ func _build() -> void:
 
 	var title := Label.new()
 	title.text = "SHRINE OF PATHS  —  choose your class   (Esc to leave)"
-	title.add_theme_font_size_override("font_size", 28)
+	UITheme.style_title(title, 28)
 	col.add_child(title)
 
 	_row = HBoxContainer.new()
@@ -75,8 +75,7 @@ func _class_card(k: int) -> Control:
 	var name_lbl := Label.new()
 	var current := " ✓ (current)" if GameState.player_class == k else ""
 	name_lbl.text = String(d["name"]) + current
-	name_lbl.add_theme_font_size_override("font_size", 24)
-	name_lbl.add_theme_color_override("font_color", d["color"])
+	UITheme.style_title(name_lbl, 24, d["color"])
 	panel.add_child(name_lbl)
 
 	var blurb := Label.new()

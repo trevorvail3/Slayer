@@ -50,7 +50,7 @@ func _build() -> void:
 	margin.add_child(root)
 	var title := Label.new()
 	title.text = "THE VAULT  —  Keeper Aldous   (Esc to leave)"
-	title.add_theme_font_size_override("font_size", 26)
+	UITheme.style_title(title, 26)
 	root.add_child(title)
 
 	var cols := HBoxContainer.new()

@@ -39,8 +39,7 @@ func _build() -> void:
 
 	var title := Label.new()
 	title.text = "CHOOSE YOUR ORDER"
-	title.add_theme_font_size_override("font_size", 34)
-	title.add_theme_color_override("font_color", UITheme.GOLD)
+	UITheme.style_title(title, 34)
 	col.add_child(title)
 
 	var sub := Label.new()
@@ -96,8 +95,7 @@ func _class_card(k: int) -> Control:
 
 	var name_lbl := Label.new()
 	name_lbl.text = String(d["name"]).to_upper()
-	name_lbl.add_theme_font_size_override("font_size", 26)
-	name_lbl.add_theme_color_override("font_color", d["color"])
+	UITheme.style_title(name_lbl, 26, d["color"])
 	v.add_child(name_lbl)
 
 	var blurb := Label.new()

@@ -21,13 +21,47 @@ const HEALTH := Color("d0574a")
 const STAMINA := Color("d9b13b")
 const SUPER := Color("ffcf6a")
 
+const F_DISPLAY := "res://assets/fonts/Cinzel.ttf"              # Roman inscriptional caps — titles
+const F_BODY := "res://assets/fonts/AlegreyaSans-Regular.ttf"  # warm humanist sans — all UI
+const F_BODY_BOLD := "res://assets/fonts/AlegreyaSans-Bold.ttf"
+
 static var _theme: Theme
+static var _display: FontFile
+static var _body: FontFile
+static var _body_bold: FontFile
+
+## The three fonts, lazily loaded. Return null (safe) if not imported yet.
+static func display_font() -> FontFile:
+	if _display == null and ResourceLoader.exists(F_DISPLAY):
+		_display = load(F_DISPLAY)
+	return _display
+
+static func body_font() -> FontFile:
+	if _body == null and ResourceLoader.exists(F_BODY):
+		_body = load(F_BODY)
+	return _body
+
+static func body_bold_font() -> FontFile:
+	if _body_bold == null and ResourceLoader.exists(F_BODY_BOLD):
+		_body_bold = load(F_BODY_BOLD)
+	return _body_bold
+
+## Style a Label as a Cinzel title/header in one call (font + size + color).
+static func style_title(label: Label, size: int, color := GOLD) -> void:
+	var f := display_font()
+	if f:
+		label.add_theme_font_override("font", f)
+	label.add_theme_font_size_override("font_size", size)
+	label.add_theme_color_override("font_color", color)
 
 static func get_theme() -> Theme:
 	if _theme != null:
 		return _theme
 	var t := Theme.new()
-	t.default_font_size = 16
+	t.default_font_size = 17
+	var bf := body_font()
+	if bf:
+		t.default_font = bf
 
 	# Panels (menu backgrounds / cards)
 	var panel := _glass(PANEL, BRONZE, 2, 8, 14)

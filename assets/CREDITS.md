@@ -17,6 +17,16 @@ Third-party art bundled in `assets/`. Keep this file updated as assets are added
   - Attribution required → satisfied by this file. If Slayer ships, keep this
     credit in the game's credits screen.
 
+## Fonts (`assets/fonts/`)
+All under the **SIL Open Font License 1.1** (free to use/embed/ship; keep the
+license notice, don't sell the fonts alone). From the Google Fonts project.
+- **Cinzel.ttf** — display/titles. Roman inscriptional capitals (the mythic look).
+  © The Cinzel Project Authors.
+- **AlegreyaSans-Regular.ttf / -Bold.ttf** — body/UI text. © The Alegreya Sans
+  Project Authors (Huerta Tipográfica).
+- OFL text: https://openfontlicense.org — vendor `OFL.txt` alongside these if we
+  ship a standalone build.
+
 ## Notes
 - HDRIs are equirectangular panoramas; the game samples them for sky + ambient light.
 - The Fox is a placeholder/test creature for the beast pipeline — swap for a

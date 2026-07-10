@@ -42,7 +42,7 @@ func _build() -> void:
 	left.custom_minimum_size = Vector2(420, 0)
 	var left_title := Label.new()
 	left_title.text = "EQUIPPED"
-	left_title.add_theme_font_size_override("font_size", 26)
+	UITheme.style_title(left_title, 26)
 	left.add_child(left_title)
 	equipped_box = VBoxContainer.new()
 	left.add_child(equipped_box)
@@ -56,7 +56,7 @@ func _build() -> void:
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var right_title := Label.new()
 	right_title.text = "BACKPACK  —  click to equip, or Salvage for materials"
-	right_title.add_theme_font_size_override("font_size", 26)
+	UITheme.style_title(right_title, 26)
 	right.add_child(right_title)
 	var salvage_all := Button.new()
 	salvage_all.text = "Salvage all Common / Uncommon"

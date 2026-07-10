@@ -168,6 +168,10 @@ Groundwork to make it read like a real game (see [[Art Pipeline]]).
 - **UI overhaul — Phase 1 (start menu + intro):**
   - New **dark-glass + bronze** `UITheme` (palette constants + styleboxes) — the
     whole menu set re-skins from this one file.
+  - **Typography** (marketable identity): **Cinzel** (Roman inscriptional caps) on
+    every title/header + discovery banner; **Alegreya Sans** as the global UI font.
+    Both OFL, in `assets/fonts/`; wired via `UITheme.display_font()` / `body_font()`
+    / `style_title()`.
   - **Main menu** is now the boot scene (`scenes/main_menu.tscn`): New Game /
     Continue / Quit. Class selection moved to a Destiny-style **character
     creation** screen (`character_create.gd`); the in-town Shrine stays as respec.

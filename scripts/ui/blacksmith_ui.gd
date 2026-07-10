@@ -61,7 +61,7 @@ func _build() -> void:
 	left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var title := Label.new()
 	title.text = "THE FORGE  —  Bruna Ironhand   (Esc to leave)"
-	title.add_theme_font_size_override("font_size", 26)
+	UITheme.style_title(title, 26)
 	left.add_child(title)
 	_cost_note = Label.new()
 	_cost_note.add_theme_font_size_override("font_size", 18)

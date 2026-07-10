@@ -111,8 +111,7 @@ func _build() -> void:
 	region_box.modulate.a = 0.0
 	region_title = Label.new()
 	region_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	region_title.add_theme_font_size_override("font_size", 40)
-	region_title.add_theme_color_override("font_color", Color("e8dcc0"))
+	UITheme.style_title(region_title, 44, UITheme.TEXT)
 	region_box.add_child(region_title)
 	region_sub = Label.new()
 	region_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER

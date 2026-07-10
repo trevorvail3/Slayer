@@ -27,8 +27,7 @@ func _build() -> void:
 	var title := Label.new()
 	title.text = "SLAYER"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 96)
-	title.add_theme_color_override("font_color", UITheme.GOLD)
+	UITheme.style_title(title, 96)
 	title.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	title.offset_top = 130
 	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
