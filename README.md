@@ -13,18 +13,30 @@ by milestone; each milestone is independently playable.
 
 ---
 
-## Current milestone: **v0.7 — Living Open World**
+## Current milestone: **v0.8 — The Reach**
 
-The wilds are now *alive*. An activity **director** rotates through:
-- **Relics** — teal collectibles scattered in the zone; grab them for gold/iron and a
-  running **Relics** count (saved with your character).
-- **Blood Surge** (public event) — a toughened horde spawns; hit the **kill quota under
-  the timer** and a **Legendary+ reward chest** drops next to you.
-- **The Colossus** (world boss) — a massive red boss that periodically arrives; fell it
-  for a big pile of **Legendary+** loot, gold, and a bonus relic.
+The wilds are now a **Cosmodrome-scale patrol zone**: five named lore regions, each
+with its own terrain, landmarks, danger level, and enemy roster — with a Destiny-style
+**discovery banner** as you cross into each:
 
-The top-center banner tracks whatever's happening. Everything else (classes, weapons,
-town, save) carries over.
+| Region | Feel | Foes (Power) |
+|--------|------|--------------|
+| **The Olive Plains** | open fields, camps, a watchtower | levies, peltasts, champions, wolves (8–14) |
+| **The Hollow Wood** | dense dark forest | wolves, boars, feral hunters, outlaws (12–18) |
+| **The Broken Road** | ruined colonnade & aqueduct | sellswords, mercenaries, war-hounds (14–20) |
+| **The Barrowlands** | burial mounds, standing stones | **draugr**, barrow-wights, bone archers (18–26) |
+| **The Bonereach Foothills** | plateaus & giant pale ribs | veterans, brutes, cave-lions (24–32) |
+
+Enemies **patrol and wander** their home ground (no more cross-map beelines), come in
+**named variants** per region, and can roll as **◆ elites** — bigger, deadlier, and
+guaranteed to drop. A new **beast** archetype (quadruped wolves/boars/lions) lunges in
+packs. **Warband Assaults** erupt where you're standing; **the Bone-Titan** always
+wakes in the Foothills — travel north-west to face it. Keep moving forward and you
+**break into a run** (with a subtle FOV kick) to cross the distances.
+
+**Loot is scarce now (by design):** most kills drop *nothing* — a Common is a find,
+an Exotic is legend-tier (~0.3% of drops). Elites, bosses, events, and chests are
+where the real loot lives. Grind accordingly.
 
 **Polish pass:** enemies are **humanoid figures** that walk, telegraph, and topple over
 on death; hits throw **sparks**; the camera **head-bobs**; a filmic, bloom-lit color
@@ -111,7 +123,8 @@ and progress persists via `SaveManager` (`user://slayer_save.json`).
 | v0.4 | The Hub Town: gather, rebuild town, Blacksmith/Vault vendors, save/load |
 | v0.5 | Weapon archetypes: sword/greatsword/axe/spear/bow/crossbow, distinct feel |
 | v0.6 | Classes & Supers: 3 classes, movement/class ability + chargeable Super |
-| **v0.7** | **Living open world: relics, Blood Surge events, The Colossus world boss** ← *you are here* |
-| v0.8 | Crafting & god-rolls + Nemesis Warlords |
-| v0.9 | Progression/meta: char levels, skill trees, reputations, transmog |
+| v0.7 | Living open world: relics, public events, world boss |
+| **v0.8** | **The Reach: Cosmodrome-scale zone, 5 regions, elites, beasts, loot scarcity** ← *you are here* |
+| v0.9 | Crafting & god-rolls + Nemesis war-kings |
+| v0.95 | Progression/meta: char levels, skill trees, faction reputation, transmog |
 | v1.0 | Story campaign + first Strike (raids & co-op post-1.0) |

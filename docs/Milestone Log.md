@@ -118,3 +118,22 @@ Completed the deferred polish and pushed the lore into the game's surfaces:
   pale **Bone-Titan**); world-boss banner → "The Bone-Titan wakes"; public event →
   "Warband Assault"; class blurbs tied to the orders (Bulwark/Veiled/Ember-Marked).
 
+## v0.8 — The Reach (Cosmodrome-scale zone + loot scarcity)
+The wilds became a real patrol destination, mapped to [[Regions and City-States]]:
+- **Five named regions** tiling a ~4× larger map, each with its own ground, landmarks
+  (camps with firelight, a watchtower, a broken colonnade & aqueduct, burial mounds
+  and standing stones, plateaus and giant pale ribs), power band (8→32), and a
+  **weighted roster of named enemy variants** (Levy Spearman → Draugr → Cave-Lion...).
+- **Region discovery banners** (Destiny-style fade) on crossing a border.
+- **Wander/aggro AI** — enemies patrol near their spawn, aggro at range or on damage,
+  and leash back; no more cross-map beelines. New **BEAST** archetype: fast quadruped
+  (wolves/boars/lions) with a crouch-lunge.
+- **◆ Elites** — per-region chance; bigger/tougher, name label, guaranteed Uncommon+ drop.
+- **Activities placed in the world** — Warband Assaults erupt in your region; the
+  **Bone-Titan always wakes in the Foothills** (travel to it). Chests/relics/resource
+  nodes distributed across all five regions.
+- **Loot scarcity** — trash drop chance ~12% (was 100%); rarity weights now
+  79/15/4.5/1.2/**0.3** (Exotic). Elites/bosses/chests pay via min-rarity floors.
+  New headless test locks the floor behavior.
+- **Traversal** — auto-run after ~1s of forward movement (+35% speed, FOV widens).
+

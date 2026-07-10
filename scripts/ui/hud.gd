@@ -14,6 +14,10 @@ var resource_label: Label
 var class_label: Label
 var super_bar: ProgressBar
 var ability_label: Label
+var region_box: VBoxContainer
+var region_title: Label
+var region_sub: Label
+var _region_tween: Tween
 var _toast_timer := 0.0
 
 func _ready() -> void:
@@ -98,6 +102,38 @@ func _build() -> void:
 	ability_label.position = Vector2(-200, -48)
 	ability_label.add_theme_font_size_override("font_size", 16)
 	root.add_child(ability_label)
+
+	# Destiny-style region-discovery banner (fades in/out on area change).
+	region_box = VBoxContainer.new()
+	region_box.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	region_box.offset_top = 120
+	region_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	region_box.modulate.a = 0.0
+	region_title = Label.new()
+	region_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	region_title.add_theme_font_size_override("font_size", 40)
+	region_title.add_theme_color_override("font_color", Color("e8dcc0"))
+	region_box.add_child(region_title)
+	region_sub = Label.new()
+	region_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	region_sub.add_theme_font_size_override("font_size", 18)
+	region_sub.add_theme_color_override("font_color", Color("a89a7a"))
+	region_box.add_child(region_sub)
+	root.add_child(region_box)
+
+## Big fading "area discovered" banner.
+func show_region(title: String, sub: String = "") -> void:
+	if region_title == null:
+		return
+	region_title.text = title.to_upper()
+	region_sub.text = sub
+	if _region_tween and _region_tween.is_valid():
+		_region_tween.kill()
+	region_box.modulate.a = 0.0
+	_region_tween = create_tween()
+	_region_tween.tween_property(region_box, "modulate:a", 1.0, 0.45)
+	_region_tween.tween_interval(2.4)
+	_region_tween.tween_property(region_box, "modulate:a", 0.0, 0.9)
 
 	toast = Label.new()
 	toast.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)

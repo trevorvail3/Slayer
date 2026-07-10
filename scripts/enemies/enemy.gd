@@ -1,27 +1,38 @@
 class_name Enemy
 extends CharacterBody3D
 
-## Monster with combat rhythm and three archetypes:
-##  - GRUNT: balanced melee chaser (the original).
-##  - BRUTE: slow, huge HP, heavy hits, resists knockback. Set is_boss for the Warlord.
-##  - ARCHER: keeps its distance and fires projectiles.
-## Telegraphs a wind-up before attacking, can be staggered/parried, takes
-## knockback, shows a floating health bar, and drops rolled loot on death.
+## A foe of the Reach. Four archetypes:
+##  - GRUNT: balanced melee (levies, draugr, sellswords...)
+##  - BRUTE: slow, huge HP, heavy hits, resists knockback (champions, wights)
+##  - ARCHER: keeps distance and fires projectiles (peltasts, bone archers)
+##  - BEAST: fast quadruped that lunges (wolves, boars, cave-lions)
+## Spawners can reskin any archetype (display_name + custom_color) and roll ELITES
+## (◆ named, bigger, tougher, guaranteed loot). Enemies WANDER near their spawn
+## until the player enters aggro range or damages them, then chase; they leash
+## back if the player escapes. Telegraphed wind-ups, stagger/parry, knockback,
+## bleed, procedural rig animation, and a death topple.
 
 signal died(enemy: Enemy)
 
-enum Kind { GRUNT, BRUTE, ARCHER }
+enum Kind { GRUNT, BRUTE, ARCHER, BEAST }
 
 @export var kind: Kind = Kind.GRUNT
 @export var power := 10
 @export var is_boss := false
 @export var world_boss := false
+@export var elite := false
+@export var display_name := ""
+@export var custom_color := Color(0, 0, 0, 0)   # alpha 0 = use archetype default
+
+var region_id := ""   # set by the zone spawner; used for per-region population caps
 
 const GRAVITY := 20.0
 const CONTACT_RANGE := 2.0
 const ARCHER_KEEP_DIST := 9.0
 const ARCHER_MAX_RANGE := 18.0
 const KNOCKBACK_DECAY := 22.0
+const DEAGGRO_MULT := 2.0
+const WANDER_SPEED_FRAC := 0.35
 
 var health: int
 var max_health: int
@@ -36,7 +47,9 @@ var knockback_force := 7.0
 var knockback_resist := 0.0     # 0 = full knockback, 1 = immune
 var is_ranged := false
 var body_scale := 1.0
-var base_color := Color("8d3b3b")
+var base_color := Color("8a6a3a")
+var aggro_range := 22.0
+var drop_chance := 0.12         # most kills drop nothing — loot is scarce
 
 var _mat: StandardMaterial3D
 var _bar: HealthBar3D
@@ -46,6 +59,7 @@ var _l_arm: Node3D
 var _r_arm: Node3D
 var _l_leg: Node3D
 var _r_leg: Node3D
+var _legs: Array = []           # beast legs: [fl, fr, bl, br]
 var _anim_t := 0.0
 var _walk_phase := 0.0
 var _attack_cd := 0.0
@@ -56,6 +70,10 @@ var _bleed_ticks := 0
 var _bleed_dmg := 0
 var _bleed_timer := 0.0
 var _dead := false
+var _aggro := false
+var _home := Vector3.ZERO
+var _wander_target := Vector3.ZERO
+var _wander_wait := 0.0
 
 const WINDUP_COLOR := Color("e6b422")
 const STAGGER_COLOR := Color("3f6fb0")
@@ -66,6 +84,8 @@ func _ready() -> void:
 	_configure()
 	health = max_health
 	_build()
+	_home = global_position
+	_wander_target = _home
 
 func _configure() -> void:
 	match kind:
@@ -78,6 +98,7 @@ func _configure() -> void:
 			knockback_resist = 0.6
 			base_color = Color("6e3b2b")   # iron-blooded champion
 			body_scale = 1.5
+			aggro_range = 20.0
 		Kind.ARCHER:
 			max_health = 22 + power * 2
 			move_speed = 3.2
@@ -87,11 +108,23 @@ func _configure() -> void:
 			is_ranged = true
 			base_color = Color("6a7048")   # olive-cloaked skirmisher
 			body_scale = 0.95
+			aggro_range = 26.0
+		Kind.BEAST:
+			max_health = 18 + power * 2
+			move_speed = 5.0
+			contact_damage = 4 + power
+			windup_time = 0.28
+			attack_cooldown = 1.1
+			knockback_force = 8.0
+			base_color = Color("7d7160")
+			body_scale = 0.9
+			aggro_range = 30.0
 		_:
 			max_health = 30 + power * 3
 			move_speed = 3.0
 			contact_damage = 5 + power
 			base_color = Color("8a6a3a")   # bronze-and-leather levy
+			aggro_range = 22.0
 
 	if is_boss:
 		max_health = 600 + power * 12
@@ -102,6 +135,7 @@ func _configure() -> void:
 		knockback_resist = 0.9
 		body_scale = 2.3
 		base_color = Color("b89040")   # a bronze-crowned war-king
+		aggro_range = 60.0
 
 	if world_boss:
 		max_health = 1600 + power * 20
@@ -110,11 +144,20 @@ func _configure() -> void:
 		knockback_resist = 0.95
 		body_scale = 3.2
 		base_color = Color("cfc8b0")   # the Bone-Titan: pale stone and marrow
+		aggro_range = 70.0
+
+	if elite and not (is_boss or world_boss):
+		max_health = int(max_health * 2.2)
+		contact_damage = int(contact_damage * 1.4)
+		body_scale *= 1.25
+		move_speed *= 1.05
+
+	if custom_color.a > 0.0:
+		base_color = custom_color
+
+# --- Rig construction ---
 
 func _build() -> void:
-	var s := body_scale
-
-	# One shared material so a flash tints the whole body at once.
 	_mat = StandardMaterial3D.new()
 	_mat.albedo_color = base_color
 	_mat.roughness = 0.85
@@ -122,9 +165,35 @@ func _build() -> void:
 	_mat.rim = 0.5
 	_mat.next_pass = Toon.outline(0.03 * body_scale)
 
-	# Humanoid rig (visual only) parented to _body for facing + death topple.
 	_body = Node3D.new()
 	add_child(_body)
+	if kind == Kind.BEAST:
+		_build_beast(body_scale)
+	else:
+		_build_humanoid(body_scale)
+
+	var h := (1.5 if kind == Kind.BEAST else 2.2) * body_scale
+	var r := (0.5 if kind == Kind.BEAST else 0.6) * body_scale
+	var col := CollisionShape3D.new()
+	var shape := CapsuleShape3D.new()
+	shape.height = h
+	shape.radius = r
+	col.shape = shape
+	col.position = Vector3(0, h * 0.5, 0)
+	add_child(col)
+
+	var bar_y := (1.6 if kind == Kind.BEAST else 2.45) * body_scale
+	_bar = HealthBar3D.new()
+	_bar.position = Vector3(0, bar_y + 0.2, 0)
+	if is_boss or world_boss:
+		_bar.scale = Vector3(2.2, 2.2, 1.0)
+	add_child(_bar)
+	_bar.set_ratio(1.0)
+
+	if elite or is_boss or world_boss:
+		_add_name_label(bar_y)
+
+func _build_humanoid(s: float) -> void:
 	_body.add_child(_part(Vector3(0.62, 0.78, 0.36) * s, Vector3(0, 1.35, 0) * s))   # torso
 	_body.add_child(_part(Vector3(0.72, 0.20, 0.42) * s, Vector3(0, 1.74, 0) * s))   # shoulders
 	_head = _part(Vector3(0.34, 0.34, 0.34) * s, Vector3(0, 1.98, 0) * s)
@@ -139,22 +208,20 @@ func _build() -> void:
 	_body.add_child(_r_leg)
 	_add_prop(s)
 
-	var h := 2.2 * s
-	var r := 0.6 * s
-	var col := CollisionShape3D.new()
-	var shape := CapsuleShape3D.new()
-	shape.height = h
-	shape.radius = r
-	col.shape = shape
-	col.position = Vector3(0, h * 0.5, 0)
-	add_child(col)
-
-	_bar = HealthBar3D.new()
-	_bar.position = Vector3(0, 2.45 * s + 0.2, 0)
-	if is_boss:
-		_bar.scale = Vector3(2.2, 2.2, 1.0)
-	add_child(_bar)
-	_bar.set_ratio(1.0)
+func _build_beast(s: float) -> void:
+	# Quadruped: long body along +Z (facing direction), head at the front.
+	_body.add_child(_part(Vector3(0.5, 0.5, 1.1) * s, Vector3(0, 0.75, 0) * s))      # torso
+	_head = _part(Vector3(0.3, 0.3, 0.4) * s, Vector3(0, 0.9, 0.7) * s)
+	_body.add_child(_head)
+	_body.add_child(_part(Vector3(0.09, 0.09, 0.45) * s, Vector3(0, 0.85, -0.7) * s)) # tail
+	_legs = [
+		_limb(Vector3(-0.2, 0.75, 0.4) * s, Vector3(0.13, 0.7, 0.13) * s),   # front-left
+		_limb(Vector3(0.2, 0.75, 0.4) * s, Vector3(0.13, 0.7, 0.13) * s),    # front-right
+		_limb(Vector3(-0.2, 0.75, -0.4) * s, Vector3(0.13, 0.7, 0.13) * s),  # back-left
+		_limb(Vector3(0.2, 0.75, -0.4) * s, Vector3(0.13, 0.7, 0.13) * s),   # back-right
+	]
+	for l in _legs:
+		_body.add_child(l)
 
 func _part(size: Vector3, pos: Vector3) -> MeshInstance3D:
 	var m := MeshInstance3D.new()
@@ -197,8 +264,24 @@ func _add_prop(s: float) -> void:
 	pmat.next_pass = Toon.outline(0.02 * s)
 	prop.mesh = box
 	prop.material_override = pmat
-	prop.position = Vector3(0, -0.72 * s, -0.35 * s)   # in the right hand, pointing forward
+	prop.position = Vector3(0, -0.72 * s, 0.30 * s)   # in the right hand
 	_r_arm.add_child(prop)
+
+func _add_name_label(bar_y: float) -> void:
+	var label := Label3D.new()
+	label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	label.font_size = 40
+	label.outline_size = 8
+	label.pixel_size = 0.006
+	label.position.y = bar_y + 0.65
+	var enemy_name := display_name
+	if enemy_name == "":
+		enemy_name = "The Bone-Titan" if world_boss else "War-King"
+	label.text = ("◆ " + enemy_name) if elite else enemy_name
+	label.modulate = Color("ffcf6a") if elite else Color("ff8a6a")
+	add_child(label)
+
+# --- Simulation ---
 
 func _physics_process(delta: float) -> void:
 	_attack_cd = maxf(0.0, _attack_cd - delta)
@@ -241,6 +324,8 @@ func _physics_process(delta: float) -> void:
 	to_p.y = 0.0
 	var dist := to_p.length()
 
+	_update_aggro(dist)
+
 	# Resolving a wind-up (fires or strikes at the end).
 	if _windup_t > 0.0:
 		_windup_t -= delta
@@ -253,12 +338,47 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
+	if not _aggro:
+		_wander(delta)
+		move_and_slide()
+		return
+
 	if is_ranged:
 		_ranged_ai(to_p, dist)
 	else:
 		_melee_ai(to_p, dist)
 
 	move_and_slide()
+
+func _update_aggro(dist: float) -> void:
+	if not _aggro:
+		if dist <= aggro_range:
+			_aggro = true
+	elif dist > aggro_range * DEAGGRO_MULT and not (is_boss or world_boss):
+		_aggro = false
+
+## Off-duty patrol: drift around the spawn point, pause, drift again.
+func _wander(delta: float) -> void:
+	_wander_wait -= delta
+	var to_t := _wander_target - global_position
+	to_t.y = 0.0
+	if _wander_wait <= 0.0 or to_t.length() < 1.2:
+		_wander_wait = randf_range(2.5, 5.0)
+		if randf() < 0.35:
+			_wander_target = global_position   # just stand a while
+		else:
+			var ang := randf() * TAU
+			var r := randf_range(2.0, 9.0)
+			_wander_target = _home + Vector3(cos(ang) * r, 0, sin(ang) * r)
+		to_t = _wander_target - global_position
+		to_t.y = 0.0
+	if to_t.length() >= 1.2:
+		var d := to_t.normalized()
+		velocity.x = d.x * move_speed * WANDER_SPEED_FRAC
+		velocity.z = d.z * move_speed * WANDER_SPEED_FRAC
+	else:
+		velocity.x = 0.0
+		velocity.z = 0.0
 
 func _melee_ai(to_p: Vector3, dist: float) -> void:
 	if dist > CONTACT_RANGE:
@@ -304,11 +424,78 @@ func _fire_projectile(player: Node3D) -> void:
 	proj.global_position = origin
 	proj.setup(dir, 16.0, contact_damage)
 
+# --- Rig animation ---
+
+## Face the threat (or the walk direction when off-duty), walk when moving,
+## telegraph wind-ups, idle-sway otherwise.
+func _animate_rig(delta: float) -> void:
+	if _body == null:
+		return
+	var face := Vector3.ZERO
+	if _aggro:
+		var player := get_tree().get_first_node_in_group("player") as Node3D
+		if player:
+			face = player.global_position - global_position
+	elif Vector2(velocity.x, velocity.z).length() > 0.4:
+		face = velocity
+	if absf(face.x) + absf(face.z) > 0.01:
+		_body.rotation.y = lerp_angle(_body.rotation.y, atan2(face.x, face.z), delta * 8.0)
+
+	var hspeed := Vector2(velocity.x, velocity.z).length()
+	if kind == Kind.BEAST:
+		_animate_beast(delta, hspeed)
+	else:
+		_animate_humanoid(delta, hspeed)
+
+func _animate_humanoid(delta: float, hspeed: float) -> void:
+	if _windup_t > 0.0:
+		_r_arm.rotation.x = lerp_angle(_r_arm.rotation.x, -2.3, delta * 12.0)
+		_l_arm.rotation.x = lerp_angle(_l_arm.rotation.x, 0.5, delta * 10.0)
+		_l_leg.rotation.x = lerp_angle(_l_leg.rotation.x, 0.0, delta * 8.0)
+		_r_leg.rotation.x = lerp_angle(_r_leg.rotation.x, 0.0, delta * 8.0)
+	elif hspeed > 0.6:
+		_walk_phase += delta * (2.0 + hspeed)
+		var sw := sin(_walk_phase) * 0.6
+		_l_leg.rotation.x = sw
+		_r_leg.rotation.x = -sw
+		_l_arm.rotation.x = -sw * 0.7
+		_r_arm.rotation.x = sw * 0.7
+	else:
+		var idle := sin(_anim_t * 1.6) * 0.06
+		_l_leg.rotation.x = lerp_angle(_l_leg.rotation.x, 0.0, delta * 8.0)
+		_r_leg.rotation.x = lerp_angle(_r_leg.rotation.x, 0.0, delta * 8.0)
+		_l_arm.rotation.x = lerp_angle(_l_arm.rotation.x, idle, delta * 6.0)
+		_r_arm.rotation.x = lerp_angle(_r_arm.rotation.x, -idle, delta * 6.0)
+
+func _animate_beast(delta: float, hspeed: float) -> void:
+	if _legs.size() < 4:
+		return
+	if _windup_t > 0.0:
+		# Crouch before the lunge.
+		_body.rotation.x = lerp_angle(_body.rotation.x, -0.18, delta * 10.0)
+		for l in _legs:
+			(l as Node3D).rotation.x = lerp_angle((l as Node3D).rotation.x, 0.3, delta * 10.0)
+	elif hspeed > 0.6:
+		_body.rotation.x = lerp_angle(_body.rotation.x, 0.0, delta * 8.0)
+		_walk_phase += delta * (4.0 + hspeed * 1.5)
+		var sw := sin(_walk_phase) * 0.7
+		(_legs[0] as Node3D).rotation.x = sw    # trot: diagonal pairs
+		(_legs[3] as Node3D).rotation.x = sw
+		(_legs[1] as Node3D).rotation.x = -sw
+		(_legs[2] as Node3D).rotation.x = -sw
+	else:
+		_body.rotation.x = lerp_angle(_body.rotation.x, 0.0, delta * 8.0)
+		var idle := sin(_anim_t * 1.4) * 0.05
+		for i in _legs.size():
+			var l := _legs[i] as Node3D
+			l.rotation.x = lerp_angle(l.rotation.x, idle * (1 if i % 2 == 0 else -1), delta * 6.0)
+
 # --- Damage / reactions ---
 
 func take_damage(amount: int, is_crit: bool = false, source_pos: Vector3 = Vector3.ZERO) -> void:
 	if _dead:
 		return
+	_aggro = true
 	health -= amount
 	Combat.spawn_damage_number(global_position + Vector3(0, 2.5 * body_scale, 0), amount, is_crit)
 	if _bar:
@@ -368,6 +555,8 @@ func _set_color(c: Color) -> void:
 	if _mat:
 		_mat.albedo_color = c
 
+# --- Death & spoils ---
+
 func die() -> void:
 	if _dead:
 		return
@@ -379,13 +568,24 @@ func die() -> void:
 	Combat.spawn_hit(global_position + Vector3(0, 1.2 * body_scale, 0), base_color.lightened(0.25), 24, body_scale * 1.4)
 
 	GameState.add_gold(randi_range(4, 8 + power) + (60 if is_boss else 0) + (150 if world_boss else 0))
-	var rolls := 5 if world_boss else (3 if is_boss else 1)
-	var min_rarity := 3 if is_boss else 0    # Legendary+ from any boss
-	for i in rolls:
-		var item := LootManager.roll_item(power + (10 if is_boss else 0), loot_table, min_rarity)
-		var drop := LootDrop.new(item)
-		get_parent().add_child(drop)
-		drop.global_position = global_position + Vector3(randf_range(-1.0, 1.0), 0.5, randf_range(-1.0, 1.0))
+
+	# Loot is scarce: trash mostly drops nothing; elites and bosses always pay.
+	var chance := drop_chance
+	var rolls := 1
+	var min_rarity := 0
+	if elite:
+		chance = 1.0
+		min_rarity = 1
+	if is_boss or world_boss:
+		chance = 1.0
+		min_rarity = 3
+		rolls = 5 if world_boss else 3
+	if randf() < chance:
+		for i in rolls:
+			var item := LootManager.roll_item(power + (10 if (is_boss or world_boss) else 0), loot_table, min_rarity)
+			var drop := LootDrop.new(item)
+			get_parent().add_child(drop)
+			drop.global_position = global_position + Vector3(randf_range(-1.0, 1.0), 0.5, randf_range(-1.0, 1.0))
 	died.emit(self)
 
 	# Topple over, then free.
@@ -396,34 +596,3 @@ func die() -> void:
 		t.tween_callback(queue_free)
 	else:
 		queue_free()
-
-## Procedural rig animation: face the player, walk when moving, telegraph a
-## wind-up with a raised arm, idle-sway otherwise.
-func _animate_rig(delta: float) -> void:
-	if _body == null:
-		return
-	var player := get_tree().get_first_node_in_group("player") as Node3D
-	if player:
-		var to := player.global_position - global_position
-		if absf(to.x) + absf(to.z) > 0.01:
-			_body.rotation.y = lerp_angle(_body.rotation.y, atan2(to.x, to.z), delta * 8.0)
-
-	var hspeed := Vector2(velocity.x, velocity.z).length()
-	if _windup_t > 0.0:
-		_r_arm.rotation.x = lerp_angle(_r_arm.rotation.x, -2.3, delta * 12.0)
-		_l_arm.rotation.x = lerp_angle(_l_arm.rotation.x, 0.5, delta * 10.0)
-		_l_leg.rotation.x = lerp_angle(_l_leg.rotation.x, 0.0, delta * 8.0)
-		_r_leg.rotation.x = lerp_angle(_r_leg.rotation.x, 0.0, delta * 8.0)
-	elif hspeed > 0.6:
-		_walk_phase += delta * (2.0 + hspeed)
-		var sw := sin(_walk_phase) * 0.6
-		_l_leg.rotation.x = sw
-		_r_leg.rotation.x = -sw
-		_l_arm.rotation.x = -sw * 0.7
-		_r_arm.rotation.x = sw * 0.7
-	else:
-		var idle := sin(_anim_t * 1.6) * 0.06
-		_l_leg.rotation.x = lerp_angle(_l_leg.rotation.x, 0.0, delta * 8.0)
-		_r_leg.rotation.x = lerp_angle(_r_leg.rotation.x, 0.0, delta * 8.0)
-		_l_arm.rotation.x = lerp_angle(_l_arm.rotation.x, idle, delta * 6.0)
-		_r_arm.rotation.x = lerp_angle(_r_arm.rotation.x, -idle, delta * 6.0)

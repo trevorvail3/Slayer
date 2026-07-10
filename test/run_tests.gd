@@ -12,6 +12,7 @@ func _initialize() -> void:
 	fails += _t("affix_count_matches_rarity", _test_affix_count())
 	fails += _t("gear_score_is_average_of_equipped", _test_gear_score_average())
 	fails += _t("equipping_higher_power_raises_score", _test_equip_raises_score())
+	fails += _t("min_rarity_floor_respected", _test_min_rarity_floor())
 	fails += _t("can_afford_and_spend_math", _test_can_afford_spend())
 	fails += _t("upgrade_raises_power_and_score", _test_upgrade_raises_power())
 	fails += _t("save_roundtrip_preserves_state", _test_save_roundtrip())
@@ -110,6 +111,16 @@ func _test_equip_raises_score() -> bool:
 	gs.backpack = [better]
 	gs.equip(better)
 	return gs.gear_score() > before
+
+## Chests/bosses rely on the floor — a floored roll must never come in below it.
+func _test_min_rarity_floor() -> bool:
+	var cat = _new_catalog()
+	var lm = _new_loot(99)
+	for i in 600:
+		var it: ItemData = lm.roll_item(20, cat.default_table, 3)
+		if cat.rarities.find(it.rarity) < 3:
+			return false
+	return true
 
 func _test_can_afford_spend() -> bool:
 	var gs = _new_state()

@@ -37,15 +37,19 @@ A map of the codebase so the vault documents the code, not just the vision.
   mult, cooldown, windup, reach, stamina, anim, view color, hold/swing poses.
 
 ## Gameplay scripts (`scripts/`)
-- `hub.gd` / `zone.gd` — the two world builders (Hub = safe town; Zone = combat).
+- `hub.gd` / `zone.gd` — the two world builders (Hub = safe town; Zone = **The Reach**,
+  a five-region open patrol zone with an activity director and per-region spawner).
+- `world/zone_region.gd` — `ZoneRegion` data class: rect, power band, ground color,
+  weighted enemy table, elite chance; the spawner draws from regions near the player.
 - `player/player.gd` — FP controller; rebuilds view model + moveset from the equipped
   weapon; melee (slash/overhead/chop/thrust), ranged fire, greatsword sweep, axe
   bleed, shield block/parry, stamina, camera juice.
 - `player/player_stats.gd` — derived stats (max health/stamina, attack damage, crit,
   move speed) from equipped gear.
 - `player/arrow.gd` — player projectile (bow/crossbow).
-- `enemies/enemy.gd` — Grunt/Brute/Archer + boss; wind-up/stagger/knockback, bleed
-  DoT, health bar, loot + gold on death.
+- `enemies/enemy.gd` — Grunt/Brute/Archer/**Beast** + bosses; reskinnable per spawn
+  (display_name/custom_color), **◆ elites**, wander/aggro/leash AI, wind-up/stagger/
+  knockback, bleed DoT, health bar; **scarce loot** on death (drop chance + floors).
 - `enemies/projectile.gd` — enemy projectile.
 - `world/resource_node.gd` — gatherable tree/rock/ore (mined by hitting it).
 - `world/build_site.gd` — rebuildable plot (press E).

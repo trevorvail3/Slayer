@@ -49,12 +49,14 @@ func ensure_built() -> void:
 	default_table.base_items = base_items
 
 func _build_rarities() -> void:
+	# Deliberately grindy (Destiny-style): even a Common is an event, and Exotics
+	# are legend-tier rare. Elites/bosses/chests use min-rarity floors to pay out.
 	rarities = [
-		Rarity.new("Common",    Color("cfcfcf"), 55.0, 1, 0),
-		Rarity.new("Uncommon",  Color("4caf50"), 25.0, 2, 2),
-		Rarity.new("Rare",      Color("2196f3"), 13.0, 3, 4),
-		Rarity.new("Legendary", Color("9c27b0"),  6.0, 4, 7),
-		Rarity.new("Exotic",    Color("ffc107"),  1.0, 5, 11),
+		Rarity.new("Common",    Color("cfcfcf"), 79.0, 1, 0),
+		Rarity.new("Uncommon",  Color("4caf50"), 15.0, 2, 2),
+		Rarity.new("Rare",      Color("2196f3"),  4.5, 3, 4),
+		Rarity.new("Legendary", Color("9c27b0"),  1.2, 4, 7),
+		Rarity.new("Exotic",    Color("ffc107"),  0.3, 5, 11),
 	]
 
 func _build_base_items() -> void:

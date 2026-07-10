@@ -44,6 +44,8 @@ var _dash_vel := Vector3.ZERO
 var _bob_t := 0.0
 var _land_dip := 0.0
 var _was_air := false
+var _run_t := 0.0        # seconds of continuous forward movement
+var _sprint_frac := 0.0  # 0..1, how deep into the run we are
 var _blade_left := 0
 var _meteor_left := 0
 var _swing_tween: Tween
@@ -195,6 +197,8 @@ func _process(delta: float) -> void:
 		_land_dip = lerpf(_land_dip, 0.0, delta * 9.0)
 		camera.position.y = CAM_BASE_Y + sin(_bob_t * 2.0) * 0.025 * move_frac - _land_dip
 		camera.position.x = sin(_bob_t) * 0.02 * move_frac
+		# Widen the view as the run opens up (traversal feel on the big map).
+		camera.fov = lerpf(camera.fov, 75.0 + 8.0 * _sprint_frac, clampf(delta * 6.0, 0.0, 1.0))
 
 	if _parry_timer > 0.0:
 		_parry_timer -= delta
@@ -237,7 +241,12 @@ func _physics_process(delta: float) -> void:
 			input_dir.x += 1.0
 	input_dir = input_dir.normalized()
 
-	var speed := PlayerStats.move_speed() * (0.4 if blocking else 1.0)
+	# Auto-run: keep moving forward and you break into a sprint (up to +35%).
+	var running := input_dir.y < -0.5 and is_on_floor() and not blocking
+	_run_t = _run_t + delta if running else 0.0
+	_sprint_frac = clampf((_run_t - 1.0) / 0.8, 0.0, 1.0)
+
+	var speed := PlayerStats.move_speed() * (0.4 if blocking else 1.0) * (1.0 + 0.35 * _sprint_frac)
 	var dir := transform.basis * Vector3(input_dir.x, 0.0, input_dir.y)
 	velocity.x = dir.x * speed
 	velocity.z = dir.z * speed
