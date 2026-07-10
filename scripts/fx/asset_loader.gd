@@ -71,7 +71,13 @@ static func load_panorama_sky(path: String) -> Sky:
 ## texture. No-op if the body has no mesh or the texture is absent (keeps color).
 ## `units_per_tile` = how many world units one texture repeat covers.
 static func apply_ground_texture(body: Node, path: String, units_per_tile := 6.0) -> bool:
-	var tex := load_texture(path)
+	# Accept whatever extension the artist shipped (Poly Haven diffuse is often
+	# .jpg; we asked for .png) so the drop-in "just works" either way.
+	var resolved := path
+	if not exists(resolved):
+		var base := path.get_basename()
+		resolved = first_existing([base + ".png", base + ".jpg", base + ".jpeg", base + ".webp"])
+	var tex := load_texture(resolved)
 	if body == null or tex == null:
 		return false
 	var mi := _first_mesh(body)
