@@ -9,7 +9,7 @@ config_version=5
 config/name="Slayer"
 config/description="Fantasy first-person looter. Kill monsters, grab loot, raise your Power."
 run/main_scene="res://scenes/hub.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
 
