@@ -9,6 +9,31 @@ var rarities: Array[Rarity] = []
 var base_items: Array[ItemData] = []
 var default_table: LootTable
 
+## Hub buildings: id -> { name, npc, cost{}, blurb }. Order = display order.
+## Costs are tuned so the first rebuild is fast and satisfying.
+var buildings := {
+	"waypoint": {
+		"name": "Waystone", "npc": "Old Marek, the Pathwarden",
+		"cost": {"wood": 12, "stone": 6},
+		"blurb": "The waystone hums to life. The roads are yours again.",
+	},
+	"blacksmith": {
+		"name": "Blacksmith", "npc": "Bruna Ironhand",
+		"cost": {"wood": 25, "stone": 18, "gold": 40},
+		"blurb": "Bruna lights the forge. \"Bring me steel and I'll make you deadly.\"",
+	},
+	"vault": {
+		"name": "Vault", "npc": "Keeper Aldous",
+		"cost": {"wood": 20, "stone": 14, "gold": 20},
+		"blurb": "Aldous dusts off the shelves. Your hoard finally has a home.",
+	},
+	"tavern": {
+		"name": "Tavern", "npc": "Sella of the Ladle",
+		"cost": {"wood": 30, "stone": 10, "gold": 60},
+		"blurb": "Warmth returns to the hearth. Bounties coming soon...",
+	},
+}
+
 func _ready() -> void:
 	ensure_built()
 

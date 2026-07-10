@@ -48,6 +48,12 @@ func _roll_rarity(rarities: Array[Rarity]) -> Rarity:
 			return r
 	return rarities[0]
 
+## Re-roll an existing item's affixes in place (Blacksmith reforge → god-roll chase).
+func reroll_affixes(item: ItemData) -> void:
+	if item.rarity == null:
+		return
+	item.affixes = _roll_affixes(item.rarity, item.power)
+
 func _roll_affixes(rarity: Rarity, source_power: int) -> Array[Affix]:
 	var result: Array[Affix] = []
 	var base_val := 3 + int(source_power / 4)

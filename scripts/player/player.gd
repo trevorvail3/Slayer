@@ -203,7 +203,9 @@ func _do_hit() -> void:
 	if not attack_ray.is_colliding():
 		return
 	var target := attack_ray.get_collider() as Node
-	if not (target and target.is_in_group("enemy") and target.has_method("take_damage")):
+	var hittable: bool = target != null and target.has_method("take_damage") \
+		and (target.is_in_group("enemy") or target.is_in_group("gatherable"))
+	if not hittable:
 		return
 
 	var dmg := PlayerStats.attack_damage()

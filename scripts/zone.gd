@@ -1,8 +1,8 @@
 extends Node3D
 
-## Main — builds the v0.3 "Slice Zone" and runs the activity loop:
-## input map, lighting, a larger arena with cover + ramps, mixed-archetype enemy
-## spawns, loot chests, and the Warlord objective (cull the horde -> boss -> clear).
+## Zone — the combat "Slice Zone": lighting, arena with cover + ramps, mixed
+## enemy spawns, chests, the Warlord objective, and a pad back to town.
+## Input lives in the Game autoload now; this scene just builds the world.
 
 const ARENA_HALF := 40.0
 const MAX_ENEMIES := 6
@@ -17,44 +17,14 @@ var _boss_active := false
 var _zone_cleared := false
 
 func _ready() -> void:
-	_setup_input()
 	_build_environment()
 	_build_arena()
 	_spawn_player()
 	_add_ui()
 	_spawn_chests()
+	_spawn_return_pad()
 	_start_spawner()
 	_update_objective()
-
-# --- Input map (built in code so project.godot stays minimal & robust) ---
-
-func _setup_input() -> void:
-	_bind_key("move_forward", KEY_W)
-	_bind_key("move_back", KEY_S)
-	_bind_key("move_left", KEY_A)
-	_bind_key("move_right", KEY_D)
-	_bind_key("jump", KEY_SPACE)
-	_bind_key("toggle_inventory", KEY_TAB)
-	_bind_key("toggle_inventory", KEY_I)
-	_bind_mouse("attack", MOUSE_BUTTON_LEFT)
-	_bind_mouse("block", MOUSE_BUTTON_RIGHT)
-
-func _ensure_action(action: String, event: InputEvent) -> void:
-	if not InputMap.has_action(action):
-		InputMap.add_action(action)
-	InputMap.action_add_event(action, event)
-
-func _bind_key(action: String, keycode: Key) -> void:
-	var e := InputEventKey.new()
-	e.physical_keycode = keycode
-	_ensure_action(action, e)
-
-func _bind_mouse(action: String, button: MouseButton) -> void:
-	var e := InputEventMouseButton.new()
-	e.button_index = button
-	_ensure_action(action, e)
-
-# --- World ---
 
 func _build_environment() -> void:
 	var light := DirectionalLight3D.new()
@@ -77,14 +47,12 @@ func _build_environment() -> void:
 	add_child(we)
 
 func _build_arena() -> void:
-	# Ground + boundary walls.
 	_static_box(Vector3(0, -0.5, 0), Vector3(ARENA_HALF * 2, 1, ARENA_HALF * 2), Color("39412f"))
 	_static_box(Vector3(0, 3, -ARENA_HALF), Vector3(ARENA_HALF * 2, 6, 1), Color("4b4b52"))
 	_static_box(Vector3(0, 3, ARENA_HALF), Vector3(ARENA_HALF * 2, 6, 1), Color("4b4b52"))
 	_static_box(Vector3(-ARENA_HALF, 3, 0), Vector3(1, 6, ARENA_HALF * 2), Color("4b4b52"))
 	_static_box(Vector3(ARENA_HALF, 3, 0), Vector3(1, 6, ARENA_HALF * 2), Color("4b4b52"))
 
-	# Scattered rock cover (deterministic-ish layout via fixed offsets).
 	var rocks := [
 		Vector3(10, 0, -8), Vector3(-14, 0, 6), Vector3(6, 0, 16), Vector3(-8, 0, -18),
 		Vector3(20, 0, 4), Vector3(-22, 0, -10), Vector3(2, 0, -26), Vector3(-4, 0, 24),
@@ -94,19 +62,16 @@ func _build_arena() -> void:
 		var s := 2.0 + fmod(absf(p.x + p.z), 3.0)
 		_static_box(p + Vector3(0, s * 0.5, 0), Vector3(s, s, s), Color("5a5348"))
 
-	# A couple of low platforms with ramps for verticality.
 	_platform(Vector3(-16, 0, -16), 8.0, 2.0)
 	_platform(Vector3(18, 0, 18), 9.0, 3.0)
 
 func _platform(center: Vector3, size: float, height: float) -> void:
 	_static_box(center + Vector3(0, height * 0.5, 0), Vector3(size, height, size), Color("6b6252"))
-	# Ramp up to it.
 	var ramp := _static_box(center + Vector3(0, height * 0.5, size * 0.5 + 2.0), Vector3(size * 0.6, 0.4, 5.0), Color("6b6252"))
 	ramp.rotation_degrees = Vector3(-atan2(height, 5.0) * 180.0 / PI, 0, 0)
 
 func _static_box(pos: Vector3, size: Vector3, color: Color) -> StaticBody3D:
 	var body := StaticBody3D.new()
-
 	var mesh := MeshInstance3D.new()
 	var box := BoxMesh.new()
 	box.size = size
@@ -115,13 +80,11 @@ func _static_box(pos: Vector3, size: Vector3, color: Color) -> StaticBody3D:
 	mat.albedo_color = color
 	mesh.material_override = mat
 	body.add_child(mesh)
-
 	var col := CollisionShape3D.new()
 	var shape := BoxShape3D.new()
 	shape.size = size
 	col.shape = shape
 	body.add_child(col)
-
 	body.position = pos
 	add_child(body)
 	return body
@@ -140,12 +103,17 @@ func _add_ui() -> void:
 	add_child(inv_layer)
 
 func _spawn_chests() -> void:
-	# All on open ground so loot is never gated behind terrain.
 	for p in [Vector3(-12, 0, -6), Vector3(24, 0, -18), Vector3(-26, 0, 20)]:
 		var chest := Chest.new()
 		chest.power = 18
 		add_child(chest)
 		chest.position = p
+
+func _spawn_return_pad() -> void:
+	var pad := TravelPad.new()
+	pad.to_zone = false
+	add_child(pad)
+	pad.position = Vector3(0, 0, 32)
 
 # --- Enemy spawner + objective ---
 
@@ -170,8 +138,7 @@ func _spawn_enemy() -> void:
 	e.kind = _random_kind()
 	e.power = 8 + randi() % 12
 	e.died.connect(_on_enemy_died)
-	var pos := _random_ground_pos(6.0)
-	e.position = pos
+	e.position = _random_ground_pos(6.0)
 	add_child(e)
 
 func _random_kind() -> Enemy.Kind:
@@ -187,9 +154,8 @@ func _random_ground_pos(min_from_player: float) -> Vector3:
 	for i in 12:
 		var x := randf_range(-ARENA_HALF + 4.0, ARENA_HALF - 4.0)
 		var z := randf_range(-ARENA_HALF + 4.0, ARENA_HALF - 4.0)
-		var p := Vector3(x, 3.0, z)
 		if player == null or Vector2(x - player.position.x, z - player.position.z).length() > min_from_player:
-			return p
+			return Vector3(x, 3.0, z)
 	return Vector3(randf_range(-10, 10), 3.0, randf_range(-10, 10))
 
 func _on_enemy_died(_enemy: Enemy) -> void:
@@ -225,4 +191,4 @@ func _update_objective() -> void:
 	elif _boss_active:
 		hud.set_objective("⚔ SLAY THE WARLORD ⚔")
 	else:
-		hud.set_objective("Cull the horde:  %d / %d" % [mini(_kills, KILLS_FOR_BOSS), KILLS_FOR_BOSS])
+		hud.set_objective("Cull the horde:  %d / %d   ·   pad north returns to town" % [mini(_kills, KILLS_FOR_BOSS), KILLS_FOR_BOSS])

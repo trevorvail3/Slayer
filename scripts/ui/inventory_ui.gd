@@ -71,6 +71,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _toggle() -> void:
 	visible = not visible
+	Game.menu_open = visible
 	Input.mouse_mode = Input.MOUSE_MODE_VISIBLE if visible else Input.MOUSE_MODE_CAPTURED
 	if visible:
 		_refresh()

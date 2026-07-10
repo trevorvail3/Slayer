@@ -13,16 +13,18 @@ by milestone; each milestone is independently playable.
 
 ---
 
-## Current milestone: **v0.3 — The Slice Zone**
+## Current milestone: **v0.4 — The Hub Town**
 
-Combat now has a place to live and a reason to fight. A larger zone with cover,
-rocks and ramps; **three enemy archetypes** (Grunt, heavy **Brute**, ranged
-**Archer** that lobs projectiles); **health bars** over enemies; **loot chests**
-you pop for guaranteed Rare+ gear; and an activity loop — **cull the horde**, then
-**slay the Warlord** mini-boss for guaranteed Legendary+ loot.
+The meta-progression spine. You now start in a **safe town you rebuild.** Travel
+to the combat zone via a pad, kill enemies (they drop **Gold**) and grab loot,
+then return and **gather** Wood/Stone/Iron by hitting trees and rocks with your
+weapon. Spend it at **ruined plots** (press **E**) to raise buildings — each a
+returning **NPC**: the **Blacksmith** (Bruna) lets you **upgrade gear Power** and
+**reforge** affixes; the **Vault** (Aldous) stashes overflow gear; the **Waystone**
+and **Tavern** round out the town. **Everything saves** between sessions.
 
-Built on: v0.2 combat feel (sword swings, block/parry, hit-stop, damage numbers,
-stamina) and v0.1 the loot loop (kill → rarity loot → equip → Power climbs).
+Built on: v0.3 the Slice Zone (enemy variety, chests, Warlord), v0.2 combat feel
+(swings, block/parry, hit-stop), v0.1 the loot loop.
 
 ### Run it
 
@@ -37,9 +39,15 @@ stamina) and v0.1 the loot loop (kill → rarity loot → equip → Power climbs
 | **WASD** | Move |
 | **Mouse** | Look |
 | **Space** | Jump |
-| **Left click** | Melee swing (costs stamina) |
+| **Left click** | Melee swing (costs stamina) — also **gathers** from trees/rocks in town |
 | **Right click (hold)** | Raise shield / block — tap it right as a hit lands to **parry** |
+| **E** | Interact — build/use town plots, vendors |
 | **Tab** / **I** | Toggle inventory (equip gear) |
+| **Esc** | Close a vendor/menu |
+
+Start in **town**: gather at the trees/rocks, press **E** at a ruined plot to build
+it, then walk onto the **north gate pad** to enter the wilds. In the wilds, the
+**pad to the north** returns you to town (progress autosaves on travel).
 
 ### The loop to try
 
@@ -67,16 +75,16 @@ Exits `0` if all pass, prints `PASS/FAIL` per test.
 ## Project layout
 
 ```
-autoload/    # singletons: Catalog (content), LootManager (rolls), GameState (gear), SaveManager
+autoload/    # singletons: Catalog, LootManager, GameState, Combat, SaveManager, Game (travel/input)
 data/        # Resource classes: ItemData, Rarity, Affix, LootTable
-scripts/     # player, enemies, loot pickups, UI (HUD + inventory), main scene builder
-scenes/      # main.tscn (thin entry point; scenes are built in code for now)
+scripts/     # hub.gd, zone.gd + player, enemies, world (nodes/build sites/pads), ui, fx
+scenes/      # hub.tscn (start) + zone.tscn (thin entry points; scenes built in code)
 test/        # headless logic tests
 ```
 
-Design conventions: content is data-driven (add gear = add a Catalog/`.tres` entry),
-stats recompute via the `GameState.equipment_changed` signal, and loot RNG is
-seedable for reproducible tests.
+Design conventions: content is data-driven (add gear/buildings = add a Catalog entry),
+stats/resources recompute via `GameState` signals, loot RNG is seedable for tests,
+and progress persists via `SaveManager` (`user://slayer_save.json`).
 
 ---
 
@@ -86,10 +94,11 @@ seedable for reproducible tests.
 |-----|-----------|
 | v0.1 | Loot Loop: kill → rarity loot → equip → Power climbs |
 | v0.2 | Combat feel: sword swings, block/parry, hit-stop, damage numbers, stamina |
-| **v0.3** | **The Slice Zone: bigger zone, enemy variety, health bars, chests, Warlord mini-boss** ← *you are here* |
-| v0.4 | Abilities & builds: classes, dash/ground-slam/ultimate, gear mods |
-| v0.5 | Progression & meta: levels, vendors, infusion, save/load |
-| v0.6 | Campaign: missions, hub space, bosses |
-| v0.7 | Endgame: strikes + a multi-encounter raid, Exotic/pinnacle rewards |
-| v0.8+ | Co-op fireteams (stretch — the big lift) |
-| v1.0 | Polish: art upgrade, audio, VFX, balance |
+| v0.3 | The Slice Zone: enemy variety, health bars, chests, Warlord mini-boss |
+| **v0.4** | **The Hub Town: gather, rebuild town, Blacksmith/Vault vendors, save/load** ← *you are here* |
+| v0.5 | Weapon archetypes: greatsword/axe/spear/bow/crossbow with distinct feel |
+| v0.6 | Classes & Supers: 3 classes, movement/class ability + chargeable Super |
+| v0.7 | Living open world: collectibles, public events, world bosses |
+| v0.8 | Crafting & god-rolls + Nemesis Warlords |
+| v0.9 | Progression/meta: char levels, skill trees, reputations, transmog |
+| v1.0 | Story campaign + first Strike (raids & co-op post-1.0) |

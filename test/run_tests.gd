@@ -12,6 +12,9 @@ func _initialize() -> void:
 	fails += _t("affix_count_matches_rarity", _test_affix_count())
 	fails += _t("gear_score_is_average_of_equipped", _test_gear_score_average())
 	fails += _t("equipping_higher_power_raises_score", _test_equip_raises_score())
+	fails += _t("can_afford_and_spend_math", _test_can_afford_spend())
+	fails += _t("upgrade_raises_power_and_score", _test_upgrade_raises_power())
+	fails += _t("save_roundtrip_preserves_state", _test_save_roundtrip())
 
 	if fails == 0:
 		print("\n==> ALL TESTS PASSED")
@@ -107,3 +110,65 @@ func _test_equip_raises_score() -> bool:
 	gs.backpack = [better]
 	gs.equip(better)
 	return gs.gear_score() > before
+
+func _test_can_afford_spend() -> bool:
+	var gs = _new_state()
+	gs.resources = {"wood": 20, "stone": 10, "iron": 2}
+	gs.gold = 50
+	if gs.can_afford({"wood": 25}):
+		return false
+	if not gs.can_afford({"wood": 20, "gold": 50}):
+		return false
+	if not gs.spend({"wood": 15, "gold": 40}):
+		return false
+	if gs.resources["wood"] != 5 or gs.gold != 10:
+		return false
+	# Unaffordable spend must be a no-op.
+	if gs.spend({"iron": 5}):
+		return false
+	return gs.resources["iron"] == 2
+
+func _test_upgrade_raises_power() -> bool:
+	var gs = _new_state()
+	gs.equipped = {}
+	for slot in ItemData.Slot.values():
+		gs.equipped[slot] = _mk_item(slot, 20)
+	var before := gs.gear_score()
+	var w := gs.equipped[ItemData.Slot.WEAPON] as ItemData
+	w.power += 30   # simulate a Blacksmith upgrade
+	return gs.gear_score() > before
+
+## Full round-trip needs the Catalog autoload (rarity resolution). Uses the real
+## autoloads if the headless run provides them; skips gracefully if not.
+func _test_save_roundtrip() -> bool:
+	var gs = null
+	var cat = null
+	if root:
+		gs = root.get_node_or_null("GameState")
+		cat = root.get_node_or_null("Catalog")
+	if gs == null or cat == null:
+		print("  (skip save_roundtrip: autoloads not present in this run)")
+		return true
+	cat.ensure_built()
+	gs.equipped = {}
+	gs.backpack = []
+	gs.resources = {"wood": 12, "stone": 5, "iron": 3}
+	gs.gold = 99
+	gs.town = {"blacksmith": true}
+	var w := _mk_item(ItemData.Slot.WEAPON, 42)
+	w.name = "Test Blade"
+	w.rarity = cat.rarities[3]
+	w.affixes = [Affix.new("might", 7)]
+	gs.equipped[ItemData.Slot.WEAPON] = w
+
+	var d: Dictionary = gs.to_dict()
+	gs.gold = 0
+	gs.resources = {"wood": 0, "stone": 0, "iron": 0}
+	gs.from_dict(d)
+
+	var rw := gs.equipped[ItemData.Slot.WEAPON] as ItemData
+	return gs.gold == 99 \
+		and int(gs.resources["wood"]) == 12 \
+		and bool(gs.town.get("blacksmith", false)) \
+		and rw != null and rw.power == 42 and rw.name == "Test Blade" \
+		and rw.rarity == cat.rarities[3] and rw.total_stat("might") == 7

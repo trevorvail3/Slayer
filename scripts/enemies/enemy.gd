@@ -266,6 +266,7 @@ func _set_color(c: Color) -> void:
 		_mat.albedo_color = c
 
 func die() -> void:
+	GameState.add_gold(randi_range(4, 8 + power) + (60 if is_boss else 0))
 	var rolls := 3 if is_boss else 1
 	var min_rarity := 3 if is_boss else 0    # Legendary+ from the boss
 	for i in rolls:

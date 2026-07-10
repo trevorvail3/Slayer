@@ -10,13 +10,16 @@ var stamina_bar: ProgressBar
 var block_label: Label
 var toast: Label
 var objective_label: Label
+var resource_label: Label
 var _toast_timer := 0.0
 
 func _ready() -> void:
 	_build()
 	GameState.equipment_changed.connect(_refresh)
 	GameState.loot_acquired.connect(_on_loot)
+	GameState.resources_changed.connect(_refresh_resources)
 	_refresh()
+	_refresh_resources()
 
 func _build() -> void:
 	var root := Control.new()
@@ -78,9 +81,30 @@ func _build() -> void:
 	objective_label.text = ""
 	root.add_child(objective_label)
 
+	resource_label = Label.new()
+	resource_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
+	resource_label.position = Vector2(-430, 18)
+	resource_label.add_theme_font_size_override("font_size", 18)
+	resource_label.add_theme_color_override("font_color", Color("e6d29a"))
+	resource_label.text = ""
+	root.add_child(resource_label)
+
 func set_objective(text: String) -> void:
 	if objective_label:
 		objective_label.text = text
+
+## Generic transient message (reuses the loot toast slot).
+func notify(text: String, color := Color(0.9, 0.9, 0.9)) -> void:
+	if toast:
+		toast.text = text
+		toast.add_theme_color_override("font_color", color)
+		_toast_timer = 3.0
+
+func _refresh_resources() -> void:
+	if resource_label:
+		resource_label.text = "Gold %d    Wood %d    Stone %d    Iron %d" % [
+			GameState.gold, GameState.resources.get("wood", 0),
+			GameState.resources.get("stone", 0), GameState.resources.get("iron", 0)]
 
 func _refresh() -> void:
 	power_label.text = "POWER  %d" % GameState.gear_score()
