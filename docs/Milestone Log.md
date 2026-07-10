@@ -67,3 +67,15 @@ Three classes, each with a movement ability, a class ability, and a chargeable
 Inputs: **Shift** movement · **Q** class ability · **F** Super. HUD gains a class
 label, Super meter, and ability-cooldown readout. Class defs in `data/class_defs.gd`;
 ability objects in `scripts/abilities/`.
+
+## v0.7 — Living Open World
+The zone (`zone.gd`) becomes a living patrol driven by an **activity director**:
+- **Relics** (`scripts/world/relic.gd`) — collectibles that grant gold/iron and a
+  **persisted** relic count (`GameState.relics_found`, saved).
+- **Blood Surge** (public event) — a toughened horde with a **kill quota under a
+  timer**; success drops a Legendary+ reward chest.
+- **The Colossus** (world boss) — `Enemy.world_boss` flag: huge HP/scale, deep-red;
+  drops 5 Legendary+ rolls, big gold, and a bonus relic.
+- Director cycles ambient → event → (every 3rd) world boss; the HUD banner tracks the
+  current activity and event countdown. HUD resource readout shows Relics.
+

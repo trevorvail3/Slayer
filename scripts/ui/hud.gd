@@ -21,8 +21,12 @@ func _ready() -> void:
 	GameState.equipment_changed.connect(_refresh)
 	GameState.loot_acquired.connect(_on_loot)
 	GameState.resources_changed.connect(_refresh_resources)
+	GameState.relic_found.connect(_on_relic)
 	_refresh()
 	_refresh_resources()
+
+func _on_relic(total: int) -> void:
+	notify("Relic recovered!   (%d found)" % total, Color("46e0d0"))
 
 func _build() -> void:
 	var root := Control.new()
@@ -135,9 +139,10 @@ func notify(text: String, color := Color(0.9, 0.9, 0.9)) -> void:
 
 func _refresh_resources() -> void:
 	if resource_label:
-		resource_label.text = "Gold %d    Wood %d    Stone %d    Iron %d" % [
+		resource_label.text = "Gold %d    Wood %d    Stone %d    Iron %d    Relics %d" % [
 			GameState.gold, GameState.resources.get("wood", 0),
-			GameState.resources.get("stone", 0), GameState.resources.get("iron", 0)]
+			GameState.resources.get("stone", 0), GameState.resources.get("iron", 0),
+			GameState.relics_found]
 
 func _refresh() -> void:
 	power_label.text = "POWER  %d" % GameState.gear_score()

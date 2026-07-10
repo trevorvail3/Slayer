@@ -11,6 +11,7 @@ signal loot_acquired(item: ItemData)
 signal resources_changed
 signal town_changed
 signal class_changed
+signal relic_found(total: int)
 
 var equipped: Dictionary = {}       # Slot (int) -> ItemData
 var backpack: Array[ItemData] = []
@@ -20,6 +21,7 @@ var resources := {"wood": 0, "stone": 0, "iron": 0}
 var gold := 0
 var town := {}                      # building_id (String) -> built (bool)
 var player_class := ClassDefs.Kind.WARDEN
+var relics_found := 0
 
 func _ready() -> void:
 	_equip_starter_gear()
@@ -92,6 +94,11 @@ func add_gold(amount: int) -> void:
 	gold += amount
 	resources_changed.emit()
 
+func add_relic() -> void:
+	relics_found += 1
+	relic_found.emit(relics_found)
+	resources_changed.emit()
+
 func can_afford(cost: Dictionary) -> bool:
 	for k in cost:
 		if k == "gold":
@@ -152,6 +159,7 @@ func to_dict() -> Dictionary:
 		"gold": gold,
 		"town": town,
 		"player_class": int(player_class),
+		"relics_found": relics_found,
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -171,6 +179,7 @@ func from_dict(d: Dictionary) -> void:
 	gold = int(d.get("gold", 0))
 	town = d.get("town", {})
 	player_class = int(d.get("player_class", ClassDefs.Kind.WARDEN))
+	relics_found = int(d.get("relics_found", 0))
 	equipment_changed.emit()
 	backpack_changed.emit()
 	resources_changed.emit()

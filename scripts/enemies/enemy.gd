@@ -15,6 +15,7 @@ enum Kind { GRUNT, BRUTE, ARCHER }
 @export var kind: Kind = Kind.GRUNT
 @export var power := 10
 @export var is_boss := false
+@export var world_boss := false
 
 const GRAVITY := 20.0
 const CONTACT_RANGE := 2.0
@@ -94,6 +95,14 @@ func _configure() -> void:
 		knockback_resist = 0.9
 		body_scale = 2.3
 		base_color = Color("b8860b")
+
+	if world_boss:
+		max_health = 1600 + power * 20
+		contact_damage = 26 + power * 2
+		move_speed = 2.2
+		knockback_resist = 0.95
+		body_scale = 3.2
+		base_color = Color("c0392b")
 
 func _build() -> void:
 	var h := 2.2 * body_scale
@@ -292,9 +301,9 @@ func die() -> void:
 	if _dead:
 		return
 	_dead = true
-	GameState.add_gold(randi_range(4, 8 + power) + (60 if is_boss else 0))
-	var rolls := 3 if is_boss else 1
-	var min_rarity := 3 if is_boss else 0    # Legendary+ from the boss
+	GameState.add_gold(randi_range(4, 8 + power) + (60 if is_boss else 0) + (150 if world_boss else 0))
+	var rolls := 5 if world_boss else (3 if is_boss else 1)
+	var min_rarity := 3 if is_boss else 0    # Legendary+ from any boss
 	for i in rolls:
 		var item := LootManager.roll_item(power + (10 if is_boss else 0), loot_table, min_rarity)
 		var drop := LootDrop.new(item)

@@ -13,20 +13,20 @@ by milestone; each milestone is independently playable.
 
 ---
 
-## Current milestone: **v0.6 — Classes & Supers**
+## Current milestone: **v0.7 — Living Open World**
 
-Pick a **class** at the **Shrine of Paths** in town. Each has a movement ability, a
-class ability, and a chargeable **Super** (fill the meter by dealing damage — Ferocity
-charges it faster):
+The wilds are now *alive*. An activity **director** rotates through:
+- **Relics** — teal collectibles scattered in the zone; grab them for gold/iron and a
+  running **Relics** count (saved with your character).
+- **Blood Surge** (public event) — a toughened horde spawns; hit the **kill quota under
+  the timer** and a **Legendary+ reward chest** drops next to you.
+- **The Colossus** (world boss) — a massive red boss that periodically arrives; fell it
+  for a big pile of **Legendary+** loot, gold, and a bonus relic.
 
-- **Warden** (tank) — Shoulder Dash · **Barricade** wall · **Ground Slam** super
-- **Stalker** (agile) — Dodge Roll (i-frames) · **Caltrops** · **Blade Storm** super
-- **Runecaster** (mystic) — Blink · **Runic Rift** (heal zone) · **Meteor Storm** super
+The top-center banner tracks whatever's happening. Everything else (classes, weapons,
+town, save) carries over.
 
-Abilities: **Shift** = movement, **Q** = class ability, **F** = Super (when full).
-Your class is saved with your character.
-
-Built on: v0.5 weapon archetypes, v0.4 hub town + save/load, v0.3 Slice Zone, v0.2 combat feel, v0.1 loot loop.
+Built on: v0.6 classes & Supers, v0.5 weapon archetypes, v0.4 hub town + save/load, v0.3 Slice Zone, v0.2 combat feel, v0.1 loot loop.
 
 ### Run it
 
@@ -102,8 +102,8 @@ and progress persists via `SaveManager` (`user://slayer_save.json`).
 | v0.3 | The Slice Zone: enemy variety, health bars, chests, Warlord mini-boss |
 | v0.4 | The Hub Town: gather, rebuild town, Blacksmith/Vault vendors, save/load |
 | v0.5 | Weapon archetypes: sword/greatsword/axe/spear/bow/crossbow, distinct feel |
-| **v0.6** | **Classes & Supers: 3 classes, movement/class ability + chargeable Super** ← *you are here* |
-| v0.7 | Living open world: collectibles, public events, world bosses |
+| v0.6 | Classes & Supers: 3 classes, movement/class ability + chargeable Super |
+| **v0.7** | **Living open world: relics, Blood Surge events, The Colossus world boss** ← *you are here* |
 | v0.8 | Crafting & god-rolls + Nemesis Warlords |
 | v0.9 | Progression/meta: char levels, skill trees, reputations, transmog |
 | v1.0 | Story campaign + first Strike (raids & co-op post-1.0) |

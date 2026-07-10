@@ -1,20 +1,25 @@
 extends Node3D
 
-## Zone — the combat "Slice Zone": lighting, arena with cover + ramps, mixed
-## enemy spawns, chests, the Warlord objective, and a pad back to town.
-## Input lives in the Game autoload now; this scene just builds the world.
+## Zone — the living "Slice Zone". Ambient enemies always roam; an activity
+## DIRECTOR rotates through Public Events (Blood Surge) and a World Boss (The
+## Colossus), with Relics to collect. Input lives in the Game autoload.
 
 const ARENA_HALF := 40.0
-const MAX_ENEMIES := 6
-const KILLS_FOR_BOSS := 10
+
+enum Phase { AMBIENT, EVENT, BOSS }
 
 var hud: HUD
 var player: Player
 
-var _kills := 0
-var _boss_spawned := false
-var _boss_active := false
-var _zone_cleared := false
+var _phase := Phase.AMBIENT
+var _phase_timer := 20.0
+var _max_enemies := 6
+var _power_bonus := 0
+var _event_kills := 0
+var _event_target := 0
+var _event_time := 0.0
+var _cycle := 0
+var _boss: Enemy = null
 
 func _ready() -> void:
 	_build_environment()
@@ -22,9 +27,148 @@ func _ready() -> void:
 	_spawn_player()
 	_add_ui()
 	_spawn_chests()
+	_scatter_relics()
 	_spawn_return_pad()
 	_start_spawner()
-	_update_objective()
+	hud.set_objective("Patrol the wilds — an event stirs soon…   ·   pad north returns to town")
+
+# --- Activity director ---
+
+func _process(delta: float) -> void:
+	match _phase:
+		Phase.AMBIENT:
+			_phase_timer -= delta
+			if _phase_timer <= 0.0:
+				_begin_next_activity()
+		Phase.EVENT:
+			_event_time -= delta
+			if _event_time <= 0.0:
+				_end_event(false)
+			else:
+				hud.set_objective("⚔ BLOOD SURGE — slay %d/%d   (%s)" % [_event_kills, _event_target, _fmt(_event_time)])
+		Phase.BOSS:
+			pass   # transition handled by the boss's died signal
+
+func _begin_next_activity() -> void:
+	_cycle += 1
+	if _cycle % 3 == 0:
+		_begin_boss()
+	else:
+		_begin_event()
+
+func _begin_event() -> void:
+	_phase = Phase.EVENT
+	_event_kills = 0
+	_event_target = 12
+	_event_time = 45.0
+	_max_enemies = 10
+	_power_bonus = 6
+	hud.set_objective("⚔ BLOOD SURGE begins — cut them down!")
+
+func _end_event(success: bool) -> void:
+	_phase = Phase.AMBIENT
+	_max_enemies = 6
+	_power_bonus = 0
+	_phase_timer = 25.0
+	if success:
+		_spawn_reward_chest()
+		hud.set_objective("★ Blood Surge repelled — loot dropped near you!")
+	else:
+		hud.set_objective("The surge subsides… hold for the next.")
+
+func _begin_boss() -> void:
+	_phase = Phase.BOSS
+	_max_enemies = 3
+	_power_bonus = 0
+	_boss = Enemy.new()
+	_boss.is_boss = true
+	_boss.world_boss = true
+	_boss.power = 34
+	_boss.died.connect(_on_boss_died)
+	_boss.position = Vector3(0, 5, -ARENA_HALF + 10.0)
+	add_child(_boss)
+	hud.set_objective("⚠ WORLD BOSS — THE COLOSSUS has arrived!")
+
+func _on_boss_died(_enemy: Enemy) -> void:
+	_boss = null
+	_phase = Phase.AMBIENT
+	_max_enemies = 6
+	_phase_timer = 30.0
+	_spawn_reward_chest()
+	GameState.add_relic()   # bonus relic for the kill
+	hud.set_objective("★ THE COLOSSUS FALLS — claim the spoils!")
+
+func _spawn_reward_chest() -> void:
+	var chest := Chest.new()
+	chest.power = 26
+	chest.min_rarity_index = 3   # Legendary+
+	chest.rolls = 2
+	add_child(chest)
+	var pos := player.global_position + Vector3(randf_range(-3, 3), 0, randf_range(-3, 3))
+	pos.y = 0.0
+	chest.position = pos
+
+func _fmt(t: float) -> String:
+	var s := int(max(0.0, t))
+	return "%d:%02d" % [s / 60, s % 60]
+
+# --- Spawner ---
+
+func _start_spawner() -> void:
+	var timer := Timer.new()
+	timer.wait_time = 1.5
+	timer.autostart = true
+	timer.timeout.connect(_tick_spawn)
+	add_child(timer)
+	_tick_spawn()
+
+func _tick_spawn() -> void:
+	var count := get_tree().get_nodes_in_group("enemy").size()
+	while count < _max_enemies:
+		_spawn_enemy()
+		count += 1
+
+func _spawn_enemy() -> void:
+	var e := Enemy.new()
+	e.kind = _random_kind()
+	e.power = 8 + randi() % 12 + _power_bonus
+	e.died.connect(_on_enemy_died)
+	e.position = _random_ground_pos(6.0)
+	add_child(e)
+
+func _on_enemy_died(_enemy: Enemy) -> void:
+	if _phase == Phase.EVENT:
+		_event_kills += 1
+		if _event_kills >= _event_target:
+			_end_event(true)
+
+func _random_kind() -> Enemy.Kind:
+	var r := randf()
+	if r < 0.60:
+		return Enemy.Kind.GRUNT
+	elif r < 0.82:
+		return Enemy.Kind.ARCHER
+	else:
+		return Enemy.Kind.BRUTE
+
+func _random_ground_pos(min_from_player: float) -> Vector3:
+	for i in 12:
+		var x := randf_range(-ARENA_HALF + 4.0, ARENA_HALF - 4.0)
+		var z := randf_range(-ARENA_HALF + 4.0, ARENA_HALF - 4.0)
+		if player == null or Vector2(x - player.position.x, z - player.position.z).length() > min_from_player:
+			return Vector3(x, 3.0, z)
+	return Vector3(randf_range(-10, 10), 3.0, randf_range(-10, 10))
+
+# --- Collectibles ---
+
+func _scatter_relics() -> void:
+	for p in [Vector3(-18, 0.9, 10), Vector3(22, 0.9, -6), Vector3(-8, 0.9, -24),
+			Vector3(30, 0.9, 20), Vector3(-30, 0.9, -16), Vector3(4, 0.9, 28)]:
+		var relic := Relic.new()
+		add_child(relic)
+		relic.position = p
+
+# --- World ---
 
 func _build_environment() -> void:
 	var light := DirectionalLight3D.new()
@@ -114,81 +258,3 @@ func _spawn_return_pad() -> void:
 	pad.to_zone = false
 	add_child(pad)
 	pad.position = Vector3(0, 0, 32)
-
-# --- Enemy spawner + objective ---
-
-func _start_spawner() -> void:
-	var timer := Timer.new()
-	timer.wait_time = 1.5
-	timer.autostart = true
-	timer.timeout.connect(_tick_spawn)
-	add_child(timer)
-	_tick_spawn()
-
-func _tick_spawn() -> void:
-	if _boss_active or _zone_cleared:
-		return
-	var count := get_tree().get_nodes_in_group("enemy").size()
-	while count < MAX_ENEMIES:
-		_spawn_enemy()
-		count += 1
-
-func _spawn_enemy() -> void:
-	var e := Enemy.new()
-	e.kind = _random_kind()
-	e.power = 8 + randi() % 12
-	e.died.connect(_on_enemy_died)
-	e.position = _random_ground_pos(6.0)
-	add_child(e)
-
-func _random_kind() -> Enemy.Kind:
-	var r := randf()
-	if r < 0.60:
-		return Enemy.Kind.GRUNT
-	elif r < 0.82:
-		return Enemy.Kind.ARCHER
-	else:
-		return Enemy.Kind.BRUTE
-
-func _random_ground_pos(min_from_player: float) -> Vector3:
-	for i in 12:
-		var x := randf_range(-ARENA_HALF + 4.0, ARENA_HALF - 4.0)
-		var z := randf_range(-ARENA_HALF + 4.0, ARENA_HALF - 4.0)
-		if player == null or Vector2(x - player.position.x, z - player.position.z).length() > min_from_player:
-			return Vector3(x, 3.0, z)
-	return Vector3(randf_range(-10, 10), 3.0, randf_range(-10, 10))
-
-func _on_enemy_died(_enemy: Enemy) -> void:
-	if _zone_cleared:
-		return
-	_kills += 1
-	if not _boss_spawned and _kills >= KILLS_FOR_BOSS:
-		_spawn_boss()
-	_update_objective()
-
-func _spawn_boss() -> void:
-	_boss_spawned = true
-	_boss_active = true
-	var boss := Enemy.new()
-	boss.kind = Enemy.Kind.BRUTE
-	boss.is_boss = true
-	boss.power = 28
-	boss.died.connect(_on_boss_died)
-	boss.position = Vector3(0, 4, -ARENA_HALF + 8.0)
-	add_child(boss)
-	_update_objective()
-
-func _on_boss_died(_enemy: Enemy) -> void:
-	_boss_active = false
-	_zone_cleared = true
-	_update_objective()
-
-func _update_objective() -> void:
-	if hud == null:
-		return
-	if _zone_cleared:
-		hud.set_objective("★ ZONE CLEARED — the Warlord has fallen! ★")
-	elif _boss_active:
-		hud.set_objective("⚔ SLAY THE WARLORD ⚔")
-	else:
-		hud.set_objective("Cull the horde:  %d / %d   ·   pad north returns to town" % [mini(_kills, KILLS_FOR_BOSS), KILLS_FOR_BOSS])
