@@ -16,6 +16,7 @@ config/features=PackedStringArray("4.3", "Forward Plus")
 Catalog="*res://autoload/catalog.gd"
 LootManager="*res://autoload/loot_manager.gd"
 GameState="*res://autoload/game_state.gd"
+Combat="*res://autoload/combat.gd"
 SaveManager="*res://autoload/save_manager.gd"
 
 [display]

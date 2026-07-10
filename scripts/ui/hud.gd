@@ -6,6 +6,8 @@ extends CanvasLayer
 
 var power_label: Label
 var health_bar: ProgressBar
+var stamina_bar: ProgressBar
+var block_label: Label
 var toast: Label
 var _toast_timer := 0.0
 
@@ -39,7 +41,27 @@ func _build() -> void:
 	health_bar.size = Vector2(240, 22)
 	health_bar.max_value = 100
 	health_bar.value = 100
+	health_bar.show_percentage = false
 	root.add_child(health_bar)
+
+	stamina_bar = ProgressBar.new()
+	stamina_bar.position = Vector2(20, 84)
+	stamina_bar.custom_minimum_size = Vector2(180, 12)
+	stamina_bar.size = Vector2(180, 12)
+	stamina_bar.max_value = 100
+	stamina_bar.value = 100
+	stamina_bar.show_percentage = false
+	var stam_fill := StyleBoxFlat.new()
+	stam_fill.bg_color = Color("d9b13b")
+	stamina_bar.add_theme_stylebox_override("fill", stam_fill)
+	root.add_child(stamina_bar)
+
+	block_label = Label.new()
+	block_label.position = Vector2(20, 100)
+	block_label.add_theme_font_size_override("font_size", 18)
+	block_label.add_theme_color_override("font_color", Color("7fb0ff"))
+	block_label.text = ""
+	root.add_child(block_label)
 
 	toast = Label.new()
 	toast.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -65,3 +87,6 @@ func _process(delta: float) -> void:
 	if p:
 		health_bar.max_value = PlayerStats.max_health()
 		health_bar.value = p.health
+		stamina_bar.max_value = PlayerStats.max_stamina()
+		stamina_bar.value = p.stamina
+		block_label.text = "◤ BLOCKING" if p.blocking else ""

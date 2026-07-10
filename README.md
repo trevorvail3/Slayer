@@ -13,11 +13,16 @@ by milestone; each milestone is independently playable.
 
 ---
 
-## Current milestone: **v0.1 — The Loot Loop**
+## Current milestone: **v0.2 — Combat Feel**
 
-The addictive core is in: **kill an enemy → it drops rarity-rolled loot → pick it
-up → equip it → your Power Level climbs.** Art is intentionally placeholder
-(primitives tinted by rarity) so the *systems* come first.
+The core loop from v0.1 is now wrapped in weighty melee: a visible sword with a
+real swing arc, **hit-stop** + camera kick + enemy knockback on impact, floating
+**damage numbers** (crits driven by Ferocity), a **shield block** (right-click)
+with a **parry window** that staggers enemies, enemy **wind-up tells**, and a
+**stamina** economy. Art is still intentionally placeholder so feel comes first.
+
+Previously (v0.1 — The Loot Loop): kill an enemy → it drops rarity-rolled loot →
+pick it up → equip it → your Power Level climbs.
 
 ### Run it
 
@@ -32,7 +37,8 @@ up → equip it → your Power Level climbs.** Art is intentionally placeholder
 | **WASD** | Move |
 | **Mouse** | Look |
 | **Space** | Jump |
-| **Left click** | Melee attack |
+| **Left click** | Melee swing (costs stamina) |
+| **Right click (hold)** | Raise shield / block — tap it right as a hit lands to **parry** |
 | **Tab** / **I** | Toggle inventory (equip gear) |
 
 ### The loop to try
@@ -78,8 +84,8 @@ seedable for reproducible tests.
 
 | Ver | Milestone |
 |-----|-----------|
-| **v0.1** | **Loot Loop** ← *you are here* |
-| v0.2 | Combat feel: real sword swings, shield block/parry, hit reactions |
+| v0.1 | Loot Loop: kill → rarity loot → equip → Power climbs |
+| **v0.2** | **Combat feel: sword swings, block/parry, hit-stop, damage numbers, stamina** ← *you are here* |
 | v0.3 | The Slice Zone: explorable fantasy area, patrols, world chests, mini-boss |
 | v0.4 | Abilities & builds: classes, dash/ground-slam/ultimate, gear mods |
 | v0.5 | Progression & meta: levels, vendors, infusion, save/load |

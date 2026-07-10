@@ -28,6 +28,7 @@ func _setup_input() -> void:
 	_bind_key("toggle_inventory", KEY_TAB)
 	_bind_key("toggle_inventory", KEY_I)
 	_bind_mouse("attack", MOUSE_BUTTON_LEFT)
+	_bind_mouse("block", MOUSE_BUTTON_RIGHT)
 
 func _ensure_action(action: String, event: InputEvent) -> void:
 	if not InputMap.has_action(action):

@@ -14,3 +14,17 @@ static func attack_damage() -> int:
 static func damage_reduction() -> float:
 	var f := float(GameState.total_stat("fortitude"))
 	return clampf(f / (f + 100.0), 0.0, 0.75)
+
+## Swiftness drives stamina pool and movement speed.
+static func max_stamina() -> float:
+	return 100.0 + GameState.total_stat("swiftness") * 4.0
+
+static func move_speed() -> float:
+	return 6.0 + GameState.total_stat("swiftness") * 0.12
+
+## Ferocity drives crit chance (1% per point, capped) and crit damage.
+static func crit_chance() -> float:
+	return clampf(GameState.total_stat("ferocity") * 0.01, 0.0, 0.6)
+
+static func crit_multiplier() -> float:
+	return 2.0
