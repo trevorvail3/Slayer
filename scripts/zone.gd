@@ -172,20 +172,34 @@ func _scatter_relics() -> void:
 
 func _build_environment() -> void:
 	var light := DirectionalLight3D.new()
-	light.rotation_degrees = Vector3(-50, -40, 0)
-	light.light_energy = 1.2
+	light.rotation_degrees = Vector3(-52, -46, 0)
+	light.light_energy = 1.15
+	light.light_color = Color("ffe0c0")   # warm key against a cool sky
 	light.shadow_enabled = true
 	add_child(light)
 
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
-	sky.sky_material = ProceduralSkyMaterial.new()
+	var skymat := ProceduralSkyMaterial.new()
+	skymat.sky_top_color = Color("2a3452")
+	skymat.sky_horizon_color = Color("7a6660")
+	skymat.ground_horizon_color = Color("3a322e")
+	skymat.ground_bottom_color = Color("241f1d")
+	sky.sky_material = skymat
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
 	env.ambient_light_energy = 0.5
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.glow_enabled = true
+	env.glow_intensity = 0.5
+	env.glow_bloom = 0.15
+	env.adjustment_enabled = true
+	env.adjustment_saturation = 1.18
+	env.adjustment_contrast = 1.08
 	env.fog_enabled = true
-	env.fog_density = 0.004
+	env.fog_light_color = Color("6b5a58")
+	env.fog_density = 0.006
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)

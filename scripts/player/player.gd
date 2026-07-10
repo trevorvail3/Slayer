@@ -17,6 +17,7 @@ const PARRY_STAGGER := 1.3
 
 const SHIELD_HIDDEN_POS := Vector3(-0.55, -0.85, -0.5)
 const SHIELD_BLOCK_POS := Vector3(-0.28, -0.22, -0.42)
+const CAM_BASE_Y := 0.7
 
 var camera: Camera3D
 var attack_ray: RayCast3D
@@ -40,6 +41,9 @@ var _charge_t := 0.0
 var _invuln_timer := 0.0
 var _dash_timer := 0.0
 var _dash_vel := Vector3.ZERO
+var _bob_t := 0.0
+var _land_dip := 0.0
+var _was_air := false
 var _blade_left := 0
 var _meteor_left := 0
 var _swing_tween: Tween
@@ -182,6 +186,14 @@ func _process(delta: float) -> void:
 	_kick = lerpf(_kick, 0.0, clampf(delta * 12.0, 0.0, 1.0))
 	if camera:
 		camera.rotation.x = _pitch + _kick
+		# Head-bob while moving on the ground + landing dip.
+		var hspeed := Vector2(velocity.x, velocity.z).length()
+		var move_frac := clampf(hspeed / maxf(1.0, PlayerStats.move_speed()), 0.0, 1.0)
+		if hspeed > 0.5 and is_on_floor():
+			_bob_t += delta * (6.0 + hspeed)
+		_land_dip = lerpf(_land_dip, 0.0, delta * 9.0)
+		camera.position.y = CAM_BASE_Y + sin(_bob_t * 2.0) * 0.025 * move_frac - _land_dip
+		camera.position.x = sin(_bob_t) * 0.02 * move_frac
 
 	if _parry_timer > 0.0:
 		_parry_timer -= delta
@@ -203,8 +215,12 @@ func _process(delta: float) -> void:
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= GRAVITY * delta
+		_was_air = true
 	else:
 		velocity.y = 0.0
+		if _was_air:
+			_land_dip = 0.12   # dip the view on landing
+			_was_air = false
 		if Input.is_action_just_pressed("jump"):
 			velocity.y = JUMP_VELOCITY
 

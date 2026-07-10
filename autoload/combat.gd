@@ -27,3 +27,13 @@ func spawn_damage_number(world_pos: Vector3, amount: int, is_crit: bool) -> void
 	scene.add_child(dn)
 	dn.global_position = world_pos
 	dn.play(amount, is_crit)
+
+## Spawn a one-shot particle burst (hit sparks / death puff).
+func spawn_hit(world_pos: Vector3, color: Color = Color.WHITE, count: int = 12, scl: float = 1.0) -> void:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+	var b := HitBurst.new()
+	scene.add_child(b)
+	b.global_position = world_pos
+	b.play(color, count, scl)

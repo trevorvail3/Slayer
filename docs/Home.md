@@ -18,10 +18,11 @@ by milestone, each build independently playable.
 ## Map of content
 - [[Game Design Doc]] — vision, pillars, stats, and the full systems list
 - [[Roadmap]] — milestone plan and status
-- [[Milestone Log]] — what actually shipped in each version (v0.1 → v0.5)
+- [[Milestone Log]] — what actually shipped in each version
 - [[Systems and Architecture]] — how the code is organized (a map of the repo)
 - [[Decisions and Open Questions]] — locked calls + things still to settle
 - [[Run and Update]] — how to run it, test it, and pull updates
+- [[World Bible (Home)]] — 📖 the lore/story reference (setting, the Blight, town, classes, bosses)
 
 ## Current status
 - **Latest milestone:** v0.5 — Weapon Archetypes (six weapon families with distinct movesets)

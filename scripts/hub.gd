@@ -40,10 +40,21 @@ func _build_environment() -> void:
 	var env := Environment.new()
 	env.background_mode = Environment.BG_SKY
 	var sky := Sky.new()
-	sky.sky_material = ProceduralSkyMaterial.new()
+	var skymat := ProceduralSkyMaterial.new()
+	skymat.sky_top_color = Color("3a6bb0")
+	skymat.sky_horizon_color = Color("cfc0a0")
+	skymat.ground_horizon_color = Color("6a6250")
+	sky.sky_material = skymat
 	env.sky = sky
 	env.ambient_light_source = Environment.AMBIENT_SOURCE_SKY
-	env.ambient_light_energy = 0.7
+	env.ambient_light_energy = 0.75
+	env.tonemap_mode = Environment.TONE_MAPPER_FILMIC
+	env.glow_enabled = true
+	env.glow_intensity = 0.4
+	env.glow_bloom = 0.1
+	env.adjustment_enabled = true
+	env.adjustment_saturation = 1.12
+	env.adjustment_contrast = 1.05
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)

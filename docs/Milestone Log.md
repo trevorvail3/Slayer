@@ -79,3 +79,19 @@ The zone (`zone.gd`) becomes a living patrol driven by an **activity director**:
 - Director cycles ambient → event → (every 3rd) world boss; the HUD banner tracks the
   current activity and event countdown. HUD resource readout shows Relics.
 
+## Polish Pass (visual) + World Bible
+A step-back polish round to make it read as a real game, plus the lore foundation.
+- **Humanoid enemy rigs** — capsules replaced by code-built bodies (torso/head/arms/
+  legs + a held prop) sized per archetype and the Colossus; shared material for flashes.
+- **Procedural animation** — face-the-player, walk cycle, wind-up arm raise, idle sway,
+  and a **death topple** (fall + sink) with corpse collision disabled.
+- **VFX** — reusable `scripts/fx/hit_burst.gd` (`GPUParticles3D`) via `Combat.spawn_hit`;
+  hit sparks on damage + a death puff.
+- **Player juice** — camera head-bob while moving + a landing dip.
+- **Lighting/grade** — filmic tonemap, glow/bloom, saturation/contrast, tuned sky & fog
+  (moody wilds, warm town).
+- **World Bible** — `docs/lore/`: setting (Aldermoor, the Blight, the Bastion), the
+  enemy roster, the town & returning NPCs, the three orders (classes), bosses, timeline,
+  tone/naming, glossary. Draft v1 to iterate on.
+- *Deferred (riskier):* custom toon/outline shader; modeled-character asset packs.
+
