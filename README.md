@@ -13,16 +13,16 @@ by milestone; each milestone is independently playable.
 
 ---
 
-## Current milestone: **v0.2 — Combat Feel**
+## Current milestone: **v0.3 — The Slice Zone**
 
-The core loop from v0.1 is now wrapped in weighty melee: a visible sword with a
-real swing arc, **hit-stop** + camera kick + enemy knockback on impact, floating
-**damage numbers** (crits driven by Ferocity), a **shield block** (right-click)
-with a **parry window** that staggers enemies, enemy **wind-up tells**, and a
-**stamina** economy. Art is still intentionally placeholder so feel comes first.
+Combat now has a place to live and a reason to fight. A larger zone with cover,
+rocks and ramps; **three enemy archetypes** (Grunt, heavy **Brute**, ranged
+**Archer** that lobs projectiles); **health bars** over enemies; **loot chests**
+you pop for guaranteed Rare+ gear; and an activity loop — **cull the horde**, then
+**slay the Warlord** mini-boss for guaranteed Legendary+ loot.
 
-Previously (v0.1 — The Loot Loop): kill an enemy → it drops rarity-rolled loot →
-pick it up → equip it → your Power Level climbs.
+Built on: v0.2 combat feel (sword swings, block/parry, hit-stop, damage numbers,
+stamina) and v0.1 the loot loop (kill → rarity loot → equip → Power climbs).
 
 ### Run it
 
@@ -85,8 +85,8 @@ seedable for reproducible tests.
 | Ver | Milestone |
 |-----|-----------|
 | v0.1 | Loot Loop: kill → rarity loot → equip → Power climbs |
-| **v0.2** | **Combat feel: sword swings, block/parry, hit-stop, damage numbers, stamina** ← *you are here* |
-| v0.3 | The Slice Zone: explorable fantasy area, patrols, world chests, mini-boss |
+| v0.2 | Combat feel: sword swings, block/parry, hit-stop, damage numbers, stamina |
+| **v0.3** | **The Slice Zone: bigger zone, enemy variety, health bars, chests, Warlord mini-boss** ← *you are here* |
 | v0.4 | Abilities & builds: classes, dash/ground-slam/ultimate, gear mods |
 | v0.5 | Progression & meta: levels, vendors, infusion, save/load |
 | v0.6 | Campaign: missions, hub space, bosses |

@@ -9,6 +9,7 @@ var health_bar: ProgressBar
 var stamina_bar: ProgressBar
 var block_label: Label
 var toast: Label
+var objective_label: Label
 var _toast_timer := 0.0
 
 func _ready() -> void:
@@ -68,6 +69,18 @@ func _build() -> void:
 	toast.position -= Vector2(180, 90)
 	toast.add_theme_font_size_override("font_size", 22)
 	root.add_child(toast)
+
+	objective_label = Label.new()
+	objective_label.set_anchors_preset(Control.PRESET_CENTER_TOP)
+	objective_label.position += Vector2(-180, 20)
+	objective_label.add_theme_font_size_override("font_size", 22)
+	objective_label.add_theme_color_override("font_color", Color("e6c86a"))
+	objective_label.text = ""
+	root.add_child(objective_label)
+
+func set_objective(text: String) -> void:
+	if objective_label:
+		objective_label.text = text
 
 func _refresh() -> void:
 	power_label.text = "POWER  %d" % GameState.gear_score()
