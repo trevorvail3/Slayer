@@ -59,10 +59,18 @@ func _build_rarities() -> void:
 
 func _build_base_items() -> void:
 	base_items = [
-		_mk("Ironhide Greatsword", ItemData.Slot.WEAPON),
-		_mk("Skullcrusher Warhammer", ItemData.Slot.WEAPON),
-		_mk("Ravager Battleaxe", ItemData.Slot.WEAPON),
-		_mk("Bulwark Tower Shield", ItemData.Slot.WEAPON),
+		_wpn("Rusthilt Shortsword", ItemData.WeaponType.SWORD),
+		_wpn("Ironfang Sword", ItemData.WeaponType.SWORD),
+		_wpn("Ironhide Greatsword", ItemData.WeaponType.GREATSWORD),
+		_wpn("Doomhewer Greatsword", ItemData.WeaponType.GREATSWORD),
+		_wpn("Ravager Battleaxe", ItemData.WeaponType.BATTLEAXE),
+		_wpn("Gorecleaver Battleaxe", ItemData.WeaponType.BATTLEAXE),
+		_wpn("Skewer Warspear", ItemData.WeaponType.SPEAR),
+		_wpn("Wyrmpike Spear", ItemData.WeaponType.SPEAR),
+		_wpn("Hunter's Longbow", ItemData.WeaponType.BOW),
+		_wpn("Stormdraw Bow", ItemData.WeaponType.BOW),
+		_wpn("Repeater Crossbow", ItemData.WeaponType.CROSSBOW),
+		_wpn("Siege Crossbow", ItemData.WeaponType.CROSSBOW),
 		_mk("Barbarian Helm", ItemData.Slot.HELM),
 		_mk("Warplate Chest", ItemData.Slot.CHEST),
 		_mk("Bruteforce Gauntlets", ItemData.Slot.ARMS),
@@ -74,4 +82,11 @@ func _mk(item_name: String, slot: ItemData.Slot) -> ItemData:
 	var it := ItemData.new()
 	it.name = item_name
 	it.slot = slot
+	return it
+
+func _wpn(item_name: String, wtype: ItemData.WeaponType) -> ItemData:
+	var it := ItemData.new()
+	it.name = item_name
+	it.slot = ItemData.Slot.WEAPON
+	it.weapon_type = wtype
 	return it

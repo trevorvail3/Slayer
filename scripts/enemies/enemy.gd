@@ -44,6 +44,10 @@ var _attack_cd := 0.0
 var _windup_t := 0.0
 var _stagger_t := 0.0
 var _knockback := Vector3.ZERO
+var _bleed_ticks := 0
+var _bleed_dmg := 0
+var _bleed_timer := 0.0
+var _dead := false
 
 const WINDUP_COLOR := Color("e6b422")
 const STAGGER_COLOR := Color("3f6fb0")
@@ -123,6 +127,9 @@ func _build() -> void:
 
 func _physics_process(delta: float) -> void:
 	_attack_cd = maxf(0.0, _attack_cd - delta)
+	_tick_bleed(delta)
+	if _dead:
+		return
 
 	if not is_on_floor():
 		velocity.y -= GRAVITY * delta
@@ -222,6 +229,8 @@ func _fire_projectile(player: Node3D) -> void:
 # --- Damage / reactions ---
 
 func take_damage(amount: int, is_crit: bool = false, source_pos: Vector3 = Vector3.ZERO) -> void:
+	if _dead:
+		return
 	health -= amount
 	Combat.spawn_damage_number(global_position + Vector3(0, 2.5 * body_scale, 0), amount, is_crit)
 	if _bar:
@@ -236,6 +245,20 @@ func take_damage(amount: int, is_crit: bool = false, source_pos: Vector3 = Vecto
 
 	if health <= 0:
 		die()
+
+## Battleaxe bleed: stack a damage-over-time that ticks twice a second.
+func apply_bleed(dmg_per_tick: int, ticks: int) -> void:
+	_bleed_dmg = maxi(_bleed_dmg, dmg_per_tick)
+	_bleed_ticks = maxi(_bleed_ticks, ticks)
+
+func _tick_bleed(delta: float) -> void:
+	if _bleed_ticks <= 0:
+		return
+	_bleed_timer -= delta
+	if _bleed_timer <= 0.0:
+		_bleed_timer = 0.5
+		_bleed_ticks -= 1
+		take_damage(_bleed_dmg, false, Vector3.ZERO)
 
 ## Freeze and turn vulnerable for `duration` (parry / heavy hit). Bosses shrug
 ## off part of it via knockback_resist acting as stagger resist too.
@@ -266,6 +289,9 @@ func _set_color(c: Color) -> void:
 		_mat.albedo_color = c
 
 func die() -> void:
+	if _dead:
+		return
+	_dead = true
 	GameState.add_gold(randi_range(4, 8 + power) + (60 if is_boss else 0))
 	var rolls := 3 if is_boss else 1
 	var min_rarity := 3 if is_boss else 0    # Legendary+ from the boss

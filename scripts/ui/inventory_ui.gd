@@ -89,7 +89,7 @@ func _refresh() -> void:
 		var it: ItemData = GameState.equipped.get(slot)
 		var slot_name := String(ItemData.Slot.keys()[slot]).capitalize()
 		if it:
-			label.text = "%s: [%s] %s  ·  Pow %d" % [slot_name, it.rarity.name, it.name, it.power]
+			label.text = "%s: [%s] %s%s  ·  Pow %d" % [slot_name, it.rarity.name, it.name, _wtype_suffix(it), it.power]
 			label.add_theme_color_override("font_color", it.display_color())
 		else:
 			label.text = "%s: (empty)" % slot_name
@@ -109,11 +109,16 @@ func _refresh() -> void:
 		var affix_txt := ""
 		for a in item.affixes:
 			affix_txt += "  " + a.describe()
-		b.text = "[%s] %s  ·  Pow %d %s" % [item.rarity.name, item.name, item.power, affix_txt]
+		b.text = "[%s] %s%s  ·  Pow %d %s" % [item.rarity.name, item.name, _wtype_suffix(item), item.power, affix_txt]
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.add_theme_color_override("font_color", item.display_color())
 		b.pressed.connect(_on_equip_pressed.bind(item))
 		backpack_box.add_child(b)
+
+func _wtype_suffix(item: ItemData) -> String:
+	if item.slot == ItemData.Slot.WEAPON and item.weapon_type != ItemData.WeaponType.NONE:
+		return "  (%s)" % item.weapon_type_name()
+	return ""
 
 func _on_equip_pressed(item: ItemData) -> void:
 	GameState.equip(item)

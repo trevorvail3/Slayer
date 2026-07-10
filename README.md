@@ -13,18 +13,22 @@ by milestone; each milestone is independently playable.
 
 ---
 
-## Current milestone: **v0.4 — The Hub Town**
+## Current milestone: **v0.5 — Weapon Archetypes**
 
-The meta-progression spine. You now start in a **safe town you rebuild.** Travel
-to the combat zone via a pad, kill enemies (they drop **Gold**) and grab loot,
-then return and **gather** Wood/Stone/Iron by hitting trees and rocks with your
-weapon. Spend it at **ruined plots** (press **E**) to raise buildings — each a
-returning **NPC**: the **Blacksmith** (Bruna) lets you **upgrade gear Power** and
-**reforge** affixes; the **Vault** (Aldous) stashes overflow gear; the **Waystone**
-and **Tavern** round out the town. **Everything saves** between sessions.
+Weapons now play completely differently — the **equipped weapon's type drives the
+whole moveset** (Destiny model: any weapon, any class). Six families:
 
-Built on: v0.3 the Slice Zone (enemy variety, chests, Warlord), v0.2 combat feel
-(swings, block/parry, hit-stop), v0.1 the loot loop.
+- **Sword** — fast, balanced diagonal slashes
+- **Greatsword** — slow, heavy overhead that **sweeps every enemy in front**
+- **Battleaxe** — chops that apply a **bleed** damage-over-time
+- **Spear** — quick **long-reach** thrusts (poke and retreat)
+- **Bow** — **hold to draw**, release to fire; full charge = big damage + crit
+- **Crossbow** — fast bolts on a reload cadence
+
+Each has its own view model, animation, damage/pace/reach, and stamina cost.
+Loot now rolls across all six; equip a new type and the feel changes instantly.
+
+Built on: v0.4 hub town + save/load, v0.3 the Slice Zone, v0.2 combat feel, v0.1 loot loop.
 
 ### Run it
 
@@ -95,8 +99,8 @@ and progress persists via `SaveManager` (`user://slayer_save.json`).
 | v0.1 | Loot Loop: kill → rarity loot → equip → Power climbs |
 | v0.2 | Combat feel: sword swings, block/parry, hit-stop, damage numbers, stamina |
 | v0.3 | The Slice Zone: enemy variety, health bars, chests, Warlord mini-boss |
-| **v0.4** | **The Hub Town: gather, rebuild town, Blacksmith/Vault vendors, save/load** ← *you are here* |
-| v0.5 | Weapon archetypes: greatsword/axe/spear/bow/crossbow with distinct feel |
+| v0.4 | The Hub Town: gather, rebuild town, Blacksmith/Vault vendors, save/load |
+| **v0.5** | **Weapon archetypes: sword/greatsword/axe/spear/bow/crossbow, distinct feel** ← *you are here* |
 | v0.6 | Classes & Supers: 3 classes, movement/class ability + chargeable Super |
 | v0.7 | Living open world: collectibles, public events, world bosses |
 | v0.8 | Crafting & god-rolls + Nemesis Warlords |

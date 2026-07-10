@@ -31,6 +31,7 @@ func roll_item(source_power: int, table: LootTable = null, min_rarity_index: int
 	var item := ItemData.new()
 	item.name = base.name
 	item.slot = base.slot
+	item.weapon_type = base.weapon_type
 	item.rarity = rarity
 	item.power = maxi(1, source_power + rarity.power_bonus + rng.randi_range(-2, 2))
 	item.affixes = _roll_affixes(rarity, source_power)

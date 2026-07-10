@@ -30,6 +30,8 @@ func _equip_starter_gear() -> void:
 		var it := ItemData.new()
 		it.name = "Rusty " + String(ItemData.Slot.keys()[slot]).capitalize()
 		it.slot = slot
+		if slot == ItemData.Slot.WEAPON:
+			it.weapon_type = ItemData.WeaponType.SWORD
 		it.rarity = Catalog.rarities[0]
 		it.power = 5
 		equipped[slot] = it
@@ -173,6 +175,7 @@ func _item_to_dict(item: ItemData) -> Dictionary:
 	return {
 		"name": item.name,
 		"slot": int(item.slot),
+		"weapon_type": int(item.weapon_type),
 		"rarity": Catalog.rarities.find(item.rarity),
 		"power": item.power,
 		"affixes": affs,
@@ -182,6 +185,7 @@ func _item_from_dict(d: Dictionary) -> ItemData:
 	var it := ItemData.new()
 	it.name = d.get("name", "Unknown")
 	it.slot = int(d.get("slot", 0))
+	it.weapon_type = int(d.get("weapon_type", 0))
 	var ri := int(d.get("rarity", 0))
 	it.rarity = Catalog.rarities[clampi(ri, 0, Catalog.rarities.size() - 1)]
 	it.power = int(d.get("power", 1))
