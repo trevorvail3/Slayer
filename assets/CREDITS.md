@@ -6,8 +6,9 @@ Third-party art bundled in `assets/`. Keep this file updated as assets are added
 - **zone.hdr** — "Kiara 1 Dawn" · **CC0** (public domain) · from Poly Haven,
   via the pmndrs/drei-assets mirror. Golden dawn over open hills — no man-made
   clutter. No attribution required.
-- **hub.hdr** — "Spruit Sunrise" · **CC0** (public domain) · from HDRI Haven / Poly Haven,
-  via the three.js sample-asset mirror. No attribution required.
+- **hub.hdr** — "Kiara 1 Dawn" · **CC0** (public domain) · from Poly Haven, via the
+  pmndrs/drei-assets mirror. Same clean natural dawn as the wilds. No attribution
+  required. (Was "Spruit Sunrise" — replaced: had man-made clutter.)
 
 ## Models (`assets/models/`)
 - **Fox.glb** — the Khronos glTF sample "Fox".
