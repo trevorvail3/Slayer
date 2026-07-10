@@ -7,39 +7,47 @@ tags: [slayer, lore]
 
 ← [[World Bible (Home)]]
 
-## The realm — Aldermoor
-**Aldermoor** was a rugged frontier kingdom of iron and oak: mountain holds, deep
-pine reaches, river-towns, and old stone roads laid by hands now forgotten. It was
-never gentle country — but it was *held*, by warrior-orders and the forges of its
-people.
+## The land — Aldermoor
+**Aldermoor** is a hard bronze-age land: the **Bonereach** mountains (the Father's
+bones), river-valleys and olive-grey plains, wind-scoured coasts on the **Weeping
+Sea**. It is the body of the slain god **Aldmar** ([[The Creation Myth]]) — a fact the
+people live inside, argue over, and kill for ([[The Faiths and Schism]]).
 
-Then came **the Blight** (see [[The Blight (The Enemy)]]). It rose from the deep
-places — old wounds in the earth — and spread like rot through root and blood. Holds
-fell. Roads went dark. The great muster of the orders broke against an enemy that
-did not tire and did not stay dead. Aldermoor is now **the Sundered Reach**: a
-ruined, Blight-touched wild dotted with the bones of what was.
+It has never been *one* nation. Aldermoor is a scatter of **city-states** — walled
+poleis of iron, marble, and pride, each with its own faith, its own phalanx, and its
+own grudges. They trade, wed, and betray one another in endless cycles of alliance and
+war. See [[Factions]] and [[Regions and City-States]].
+
+## The world's temperature — grounded, then mythic
+- **Now (Phase 1):** the wars are *human*. You fight **men** — levies, raiders,
+  mercenaries, warband champions — and **beasts** of the wilds. The one supernatural
+  thread is **the dead that will not rest**, raised by the **[[The Dead and the Ossuary Cult|Ossuary Cult]]**.
+- **The escalation (later):** the deep places still hold the old **mythic monsters** —
+  centaur war-herds, minotaur labyrinth-kin, cyclopes among the Father's bones. And
+  worse: when men dig too deep into the mountains, sometimes the **bone wakes**
+  ([[Bosses]]). The supernatural is *rare, sacred, and dreadful* — never common.
 
 ## The refuge — the Bastion
-One border town survived, because its people did the one thing that mattered: they
-**walled the light in and kept the fires lit**. That town — once **Emberhold**, now
-simply **the Bastion** — is the last free ground. It is half-ruin when you arrive,
-and it grows only because *you* rebuild it: forge, vault, tavern, waystone, and the
-orders' shrine, each raised from what you gather in the wilds.
-(In game: [[Factions and The Town]]; the hub you rebuild.)
+The **Bastion** was once the city-state of **Kaethon** *(proposed)*, sacked in the
+wars and left a ruin. It is the last free ground in its region, and it grows only
+because *you* rebuild it — forge, vault, tavern, waystone, shrine — from what you drag
+back out of the wilds. Because Kaethon fell, it lost its patron faith; the Bastion is
+now **unaligned**, a melting-pot of survivors free to choose its path. (Game: the
+rebuildable hub. Detail: [[Factions and The Town]].)
 
 ## You — the Slayer
-You are a **Slayer**: rare of blood, one of the few the Blight cannot hollow. Where
-it turns others into husks, it can only *burn* against you — and you burn back
-hotter. Slayers are drawn to the Bastion by instinct and need. You take up an
-order's discipline (see [[Classes in Lore]]), arm yourself from the ruin, and carry
-the fight back out.
+You are a **Slayer**: a mortal bearing **Vael's Mark**, able to fight like a demigod
+where ordinary soldiers cannot. Rare and half-feared, Slayers are drawn to the Bastion
+by need. You take up an **order's** discipline ([[Classes in Lore]]), arm yourself from
+the ruin, and carry the fight into a feuding, monster-haunted Aldermoor.
 
 ## The core loop, in fiction
-- **Gather** — the wilds still hold timber, ore, and **relics** (shards of the old
-  world that resist the Blight). You take them back.
-- **Rebuild** — the Bastion rises; returning survivors take up trades and arm you.
-- **Slay** — you push into the Sundered Reach, break Blight-warbands and their
-  **champions**, and reclaim ground for the light.
+- **Gather & rebuild** — reclaim timber, ore, and **relics** (old sacred remnants) from
+  the wilds; the Bastion rises and survivors return.
+- **Earn favor** — do the work of the city-states and win their reputation, or make
+  enemies of them ([[Factions]]).
+- **Slay** — break warbands, hunt beasts and monsters, and put down the war-kings and
+  the things the deep mountains wake ([[Bosses]]).
 
-The long question the story asks: *can the Blight be ended, or only held?* — and
-what a Slayer must become to answer it.
+The long questions the story asks: *why did Vael kill Aldmar — and what is a Slayer for?*
+([[The Creation Myth]].)

@@ -7,33 +7,38 @@ tags: [slayer, lore, style]
 
 ← [[World Bible (Home)]]
 
-The style guide that keeps the fiction (and the art) consistent.
+The style guide that keeps fiction and art consistent.
 
-## Tone
-- **Dark fantasy, hard iron.** Grim but not hopeless — you are *winning back* ground,
-  not just surviving. Heroic weight over misery.
-- **Hyper-masculine power fantasy** (the founding brief): you are a mountain of muscle
-  and will; combat is heavy, physical, and earned.
-- **Martial first, mystic second.** Even magic is battlefield craft (ember-runes),
-  not academia. No robed wizards; think battle-priests and rune-marked warriors.
+## Tone — "300 in a Destiny game"
+- **Bronze-age heroic / mythic-Greek.** Iron and marble, spears and shields, phalanxes,
+  honor, blood feuds, oaths. Sun-scoured and severe, not medieval-European.
+- **Grounded first, mythic later.** Phase 1 is *human* war (men, the risen dead, beasts);
+  the truly mythic (centaurs, minotaurs, waking Titans) is a rare, dreadful escalation.
+  The supernatural is **sacred and scarce**, never ambient.
+- **Hyper-masculine power fantasy** (the founding brief): heavy, physical, earned combat;
+  you are a mountain of muscle and will — a Slayer among mortals.
+- **No demons, no corruption-plague, no high wizardry.** Everything is *of this world* —
+  because the world is literally a god's body ([[The Creation Myth]]).
 
-## Visual direction (for the polish pass)
-- **Bold stylized** look: readable silhouettes, saturated but grounded palette,
-  rim-lit forms. (Placeholder rigs today; asset-pack models later.)
-- **Blight palette:** ashen greys, sickly veins, ember-orange cracks against cold
-  blue-steel shadow. The Bastion is warmer — hearth-gold and oak.
+## Visual direction
+- **Bold-stylized bronze-age:** sun-bleached stone, oiled bronze, ox-blood reds, olive
+  and dust; deep shadow. Readable silhouettes, rim-lit forms.
+- **The sacred (rare magic):** ember-gold and ash — Runecaster fire, relic glow. Used
+  sparingly so it always reads as *awe*.
+- **The dead:** bone-white, grave-grey, barrow-verdigris on old bronze.
 
 ## Naming conventions
-- **People:** earthy, Northern-European-ish, often with an epithet — *Bruna Ironhand,
-  Old Marek the Pathwarden, Sella of the Ladle.*
-- **Places:** compound old-English/Norse — *Emberhold, Aldermoor, the Sundered Reach,
-  the deep wounds, the Bastion.*
-- **Orders:** "the [Noun]" or "Order of the [Noun]" — *the Veiled, Order of the Bulwark,
-  the Runewardens.*
-- **Gear:** forceful compound names — *Ironhide Greatsword, Skullcrusher Warhammer,
-  Doomhewer, Wyrmpike.* (Matches the loot tables already in `Catalog`.)
-- **Enemies:** plain, dreadful nouns — *Husks, Brutes, Ravagers, the Blight, champions.*
-- **Avoid:** whimsical/cute names, high-magic jargon, real-world religions.
+- **Gods:** short, weighty, archaic — *Aldmar, Vael.*
+- **City-states / places:** hard bronze-age compounds — *Aldermoor, the Bonereach, the
+  Weeping Sea, Kaethon, Karnholt, Corvath, Sael, Lyr, the Barrowlands.*
+- **Orders / faiths:** "the [Noun]" / "Order of the [Noun]" — *the Veiled, the Bulwark,
+  the Gift, the Bereaved, the Mourning, the Palefathers.*
+- **People:** grounded, with epithets — *Bruna Ironhand, Old Marek the Pathwarden,
+  Warlord Draevos.*
+- **Gear:** forceful compounds (matches the loot tables in `Catalog`) — *Ironhide
+  Greatsword, Skullcrusher Warhammer, Wyrmpike.*
+- **Avoid:** cute/whimsical names, Latinate high-magic jargon, real-world religions, and
+  anything that smells of "corruption" or "the dark lord."
 
-## Words we keep straight
-Use [[Glossary]] as the quick reference so a term always means one thing.
+## The one rule
+Every term means exactly one thing — keep the [[Glossary]] authoritative.

@@ -7,27 +7,36 @@ tags: [slayer, lore, reference]
 
 ← [[World Bible (Home)]]
 
-Quick reference so every term means exactly one thing. Add entries as the world grows.
+Quick reference so every term means exactly one thing. *(proposed)* names may change.
 
 | Term | Meaning |
 |------|---------|
-| **Aldermoor** | The fallen frontier kingdom; now the ruined **Sundered Reach**. |
-| **the Sundered Reach** | Aldermoor after the Fall — the Blight-touched wilds you patrol. |
-| **the Blight** | The spreading corruption that hollows men and swells beasts. The enemy. See [[The Blight (The Enemy)]]. |
-| **the deep wounds** | Old rifts in the earth the Blight seeps from. Nature unknown. |
-| **the Fall** | The season the Blight overran Aldermoor (timeline year 0). |
-| **Emberhold** | The border forge-town that became the Bastion. |
-| **the Bastion** | The last free refuge — the town you rebuild (the hub). Its **Tier** rises as you build. |
-| **Slayer** | You. Rare of blood, cannot be hollowed by the Blight; the realm's last hope. |
-| **Husk** | A person hollowed by the Blight (in-game **Grunt**). |
-| **Brute** | A victim swelled by the Blight — huge, armored, slow. |
-| **Ravager** | A husk that kept a hunter's aim (in-game **Archer**). |
-| **champion** | A focused will of the Blight strong enough to lead — a boss. |
-| **the Warlord** | A fallen general, cunning intact; recurring antagonist. Basis for **Nemesis Warlords**. |
-| **The Colossus** | A siege-beast of corrupted earth and bone; the world boss. |
-| **the orders** | The three near-extinct warrior traditions = the classes. See [[Classes in Lore]]. |
-| **Order of the Bulwark** | Heavy-infantry order → **Warden**. |
-| **the Veiled / Gloomstalkers** | Scout-assassin order → **Stalker**. |
-| **the Runewardens** | Ember-rune order → **Runecaster**. |
-| **relic** | A shard of the old world that resists the Blight; collected in the wilds. |
+| **Aldmar** | The World-Father (Man-god), slain by Vael; his body *is* the world. |
+| **Vael** | The Mother (Woman-god), who slew Aldmar — the **First Slayer**. Her motive & fate: contested. |
+| **the Slaying** | The mythic act that made the world (year 0). See [[The Creation Myth]]. |
+| **Aldermoor** | The land — literally Aldmar's corpse; "Aldmar's moor/realm." |
+| **the Bonereach** | The mountains — the Father's bones/spine. Cyclopes and Bone-Titans dwell there. |
+| **the Weeping Sea** | The western sea — his blood and (say Mourners) Vael's tears. |
+| **the Barrowlands** | Grave-fields where the Ossuary Cult raises the dead. |
+| **the schism** | The unresolved argument over *why* Vael killed Aldmar. See [[The Faiths and Schism]]. |
+| **the Gift** | Faith: Aldmar died willingly/necessarily so the world could live. |
+| **the Betrayal** | Faith: Vael murdered him — split into **the Cunning** and **the Bereaved**. |
+| **the Mourning** | Faith: a lover's tragedy; grief cults. Parent of the Ossuary Cult. |
+| **the Deniers** | Reject the gods entirely; rationalists/skeptics. |
+| **Slayer** | You. A mortal bearing **Vael's Mark**, fighting like a demigod. |
+| **Vael's Mark** | The god-touch that makes a Slayer; source of your heroic feats/Supers. |
+| **the Bastion** | Your rebuildable home — the ruined city of **Kaethon**, now unaligned refuge. |
+| **Karnholt** | Warrior-supremacist city-state (the **Ashen Shields**); faith: the Bereaved. |
+| **Corvath** | Merchant-tyrant city-state (the **Goldhand League**); faith: the Cunning. |
+| **Sael** | Priest-city (the **Hallowed See**); faith: the Gift. |
+| **Lyr** | City of philosophers (the **Free Reckoners**); the Deniers. |
+| **the Ossuary Cult / Palefathers** | Necromancer-priests who raise the dead; Phase-1 antagonist. See [[The Dead and the Ossuary Cult]]. |
+| **draugr** | The risen recent dead (in-game melee). **Barrow-wight** = elite risen champion. |
+| **the orders** | The three martial-sacred disciplines = the classes. See [[Classes in Lore]]. |
+| **Order of the Bulwark** | Shield-line order → **Warden** (echoes Aldmar). |
+| **the Veiled** | Hunter-assassin order → **Stalker** (echoes Vael the First Slayer). |
+| **the Ember-Marked** | Sacred rune-priest order → **Runecaster** (rare, holy fire). |
+| **the Warlord** | A **title**: a mortal tyrant war-king. Basis for **Nemesis** rivals. |
+| **Bone-Titan** | An animate fragment of Aldmar's bones — the world-boss "Colossus." |
+| **relic** | An old sacred remnant recovered from the wilds; possibly a piece of the divine. |
 | **the Shrine of Paths** | Where a Slayer commits to an order (class select). |

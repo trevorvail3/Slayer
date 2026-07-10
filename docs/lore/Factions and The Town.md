@@ -3,43 +3,36 @@ title: Factions and The Town
 tags: [slayer, lore, town]
 ---
 
-# Factions & The Town
+# The Bastion — Your Town
 
-← [[World Bible (Home)]] · game side: the rebuildable hub
+← [[World Bible (Home)]] · the wider powers: [[Factions]]
 
 ## The Bastion
-The last free town — once **Emberhold**, a border forge-town; now **the Bastion**,
-a walled refuge you rebuild from ruin. Its survival is a matter of **fires kept lit
-and walls kept whole**. As you raise its buildings, survivors return and take up
-their trades — the town visibly grows from rubble to a living settlement (its
-**Tier** rises with each building).
+Once the city-state of **Kaethon** *(proposed)* — sacked in the Long Wars and left a
+ruin. You come to that ruin and make it live again, building by building, from what you
+drag out of the wilds. Because Kaethon *fell*, it lost its patron faith; the Bastion is
+now **unaligned**, a refuge of survivors from every city and creed. That's the point:
+it belongs to no faith, so it can become whatever you make it — the neutral heart of
+your dealings with the [[Factions|city-states]]. Its **Tier** rises as it grows.
 
 ## The people (returning NPCs)
-Each rebuilt building brings back a named survivor. Keep these consistent — they're
-the emotional spine of the town.
+Each rebuilt building brings back a named survivor. Keep these consistent — they're the
+emotional spine of the town, and each carries a thread into the wider world.
 
-- **Bruna Ironhand** — the **Blacksmith**. Gruff, exiled master-smith who lost her
-  hold to the Blight. Reforges and upgrades your gear. *"Bring me steel and I'll
-  make you deadly."*
-- **Keeper Aldous** — the **Vault**. Old archivist and hoarder of relics; guards
-  what you recover. Believes the relics are the key to everything.
-- **Sella of the Ladle** — the **Tavern**. Warmth, rumor, and (soon) **bounties** —
-  the board that sends Slayers after specific quarry.
-- **Old Marek, the Pathwarden** — the **Waystone**. Keeper of the old roads; his
-  restored waystone lets you travel to the wilds and back.
-- **The Shrine of Paths** — not a person but a place: where a Slayer commits to an
-  order (see [[Classes in Lore]]).
-
-## The warrior-orders
-Aldermoor's defense was three disciplines, now nearly extinct. A Slayer takes up one
-(your class). They are traditions/creeds, not blood — any Slayer may walk any path.
-Details in [[Classes in Lore]].
-- **The Order of the Bulwark** → **Warden**
-- **The Veiled / Gloomstalkers** → **Stalker**
-- **The Runewardens** → **Runecaster**
+- **Bruna Ironhand** — the **Blacksmith**. Exiled master-smith who lost her forge (and
+  her city) to the wars. Reforges and upgrades your gear. *"Bring me bronze and I'll make
+  you deadly."*
+- **Keeper Aldous** — the **Vault**. Old archivist and relic-hoarder; guards what you
+  recover and half-believes the relics are pieces of something holy. A quiet lead into
+  the mystery of [[The Creation Myth]].
+- **Sella of the Ladle** — the **Tavern**. Warmth, rumor, and **bounties** — the board
+  that sends Slayers after specific quarry and ties into [[Factions]] reputation.
+- **Old Marek, the Pathwarden** — the **Waystone**. Keeper of the old roads between the
+  poleis; his restored waystone lets you travel out and back.
+- **The Shrine of Paths** — where a Slayer commits to an **order** ([[Classes in Lore]]).
 
 ## Design intent (the differentiator)
-Unlike Destiny's static Tower, the Bastion is *yours* — it exists because you rebuilt
-it, and every returning face is a small story. Lean into this: quests, dialogue, and
-seasonal changes should make the town feel like it remembers what you've done.
-(See [[Game Design Doc]] pillar 4.)
+Unlike Destiny's static Tower, the Bastion is *yours* — it exists because you rebuilt it,
+and every returning face is a small story. As factions court or threaten a rising
+neutral city, the town becomes a stage for choices: who you let in, whose banner (if any)
+you fly, and what the Bastion *believes*. (See [[Game Design Doc]] pillar 4.)

@@ -3,36 +3,38 @@ title: Bosses
 tags: [slayer, lore, bosses]
 ---
 
-# Bosses & Blight-Champions
+# Bosses & Great Foes
 
-← [[World Bible (Home)]] · enemy basis: [[The Blight (The Enemy)]]
+← [[World Bible (Home)]] · roster: [[Bestiary]]
 
-**Champions** are focal points of the Blight's will — strong enough to lead a
-warband and hard enough to be a wall for a Slayer. Two exist in game today; the
-frame supports many more (and ties into the planned **Nemesis Warlords** system).
+Two exist in game today; both are reframed to the mythic-Aldermoor canon, and the
+frame supports many more (and feeds the planned **Nemesis** system).
 
-## The Warlord (zone mini-boss / activity)
-A **fallen human general** of Aldermoor's last muster, taken by the Blight with his
-cunning mostly intact — which makes him worse than any mindless husk. He rules a
-warband and treats the Sundered Reach as his domain. Cruel, tactical, and personally
-invested in breaking Slayers.
-- **Role:** the recurring antagonist of the wilds; the face of the horde.
-- **Hook for [[Nemesis Warlords]]:** "the Warlord" can become a *title* — procedurally
-  named rival champions that grow stronger (and taunt you) if they escape, each a
-  small emergent story. The named Warlord is the first of many.
+## The Warlord — a war-king *(zone antagonist)*
+Not a monster: a **mortal tyrant**, a conquering war-king who carves himself a realm
+from the feuding city-states — very *300*. Cruel, brilliant, and personally contemptuous
+of Slayers. He rules a warband and treats the contested plains as his by right.
+- **"The Warlord" is a title, not a man.** This is the **Nemesis hook**: procedurally-
+  named war-kings and champions can rise from any faction ([[Factions]]), grow stronger
+  (and taunt you) if they escape, and return as recurring rivals with grudges and loot.
+- Grounded, human, and personal — the face of the wars.
 
-## The Colossus (world boss)
-A **mountain of corrupted earth, bone, and fused armor** — where the Blight pooled
-deep enough to raise a walking siege-engine of a creature. Slow, immense,
-near-immovable, and catastrophic up close. When the Colossus wakes, the ground knows.
-- **Role:** the periodic world-boss spectacle; the "the ground shakes, gather up"
-  moment.
-- **Drops:** the richest spoils in the Reach (Legendary+), fitting its threat.
+## The Colossus — a Titan of Aldmar's bones *(world boss)*
+The world **is** the Father's corpse ([[The Creation Myth]]) — and sometimes, where men
+mine too deep into the **Bonereach**, the bone *remembers it was once a god* and rises: a
+**Bone-Titan**, a walking mountain of stone and marrow. Slow, immense, near-immovable,
+catastrophic. When one wakes, the ground knows for miles.
+- The mythic counterweight to the human Warlord — the moment the world stops being
+  *grounded* and becomes *awesome*.
+- **Drops** the richest spoils in the land; a periodic world-event spectacle.
+- There is not *one* Colossus — there could be many, each risen from a different bone.
 
-## Design/lore threads to develop
-- Do champions **remember**? A Warlord you fail to kill returning stronger, with a
-  grudge, is prime Nemesis material.
-- The Colossus as a recurring *event* vs. a unique named entity (there could be several
-  Colossi, each risen from a different deep wound).
-- A future **raid** boss: something near a **deep wound** itself — closer to the
-  Blight's true nature (see open questions in [[The Blight (The Enemy)]]).
+## Threads to develop
+- **Nemesis war-kings**: rivalries that remember — a Warlord you fail to kill returning
+  crowned and vengeful is prime emergent story.
+- **The Bone-Titans and the myth**: do they *hate* being woken? Are they mindless, or is
+  a sliver of Aldmar still in them? A raid boss near a **great bone** could brush the
+  truth of [[The Creation Myth]].
+- **A faith-champion boss**: e.g. a Hallowed See inquisitor-lord or an Ossuary Palefather
+  ([[The Dead and the Ossuary Cult]]) as a campaign antagonist with a *belief*, not just
+  a health bar.

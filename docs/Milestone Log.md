@@ -90,8 +90,21 @@ A step-back polish round to make it read as a real game, plus the lore foundatio
 - **Player juice** — camera head-bob while moving + a landing dip.
 - **Lighting/grade** — filmic tonemap, glow/bloom, saturation/contrast, tuned sky & fog
   (moody wilds, warm town).
-- **World Bible** — `docs/lore/`: setting (Aldermoor, the Blight, the Bastion), the
-  enemy roster, the town & returning NPCs, the three orders (classes), bosses, timeline,
-  tone/naming, glossary. Draft v1 to iterate on.
+- **World Bible** — `docs/lore/`: setting, the enemy roster, the town & returning NPCs,
+  the three orders (classes), bosses, timeline, tone/naming, glossary. *(Revised — see below.)*
 - *Deferred (riskier):* custom toon/outline shader; modeled-character asset packs.
+
+## Lore v2 — Mythic Aldermoor ("300 in a Destiny game")
+Major setting pivot (docs only, no code): dropped the "Blight/corruption"; adopted a
+grounded **bronze-age / mythic-Greek** world of feuding **city-states**.
+- **Creation myth:** the god **Vael** slew the god **Aldmar**; his body *became* the
+  world (Aldermoor). *Why* she did it is **contested** — the schism that split mankind
+  into rival **faiths** (the Gift / Betrayal / Mourning / Deniers).
+- **You:** a **Slayer** bearing **Vael's Mark** — a mortal who fights like a demigod.
+- **Phase 1 enemies:** men, the risen dead (raised by the **Ossuary Cult**), and beasts.
+  **Mythic monsters** (centaurs, minotaurs, cyclopes, Bone-Titans) are the escalation.
+- **Bosses reframed:** the Warlord → a mortal tyrant **war-king** (Nemesis basis); the
+  Colossus → a **Bone-Titan**, an animate fragment of the dead god.
+- Rewrote all `docs/lore/` notes + added Creation Myth, Faiths & Schism, Factions,
+  Regions & City-States, Bestiary, and The Dead & the Ossuary Cult.
 

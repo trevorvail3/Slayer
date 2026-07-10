@@ -7,21 +7,26 @@ tags: [slayer, lore, timeline]
 
 ← [[World Bible (Home)]]
 
-Rough, revisable chronology. Dates are relative ("the Fall" is year 0).
+Rough, revisable chronology. "The Slaying" is the mythic year 0; historical dates are
+loose ("the wars," "recent years").
 
-- **Before the Fall (…to 0)** — **Aldermoor** stands: iron holds, the three
-  warrior-orders, the ember-rune craft of the Runewardens. The **deep wounds** exist
-  but are watched and warded.
-- **The Fall (year 0)** — the **Blight** surges from the deep wounds and overruns the
-  realm within a season. The great muster of the orders breaks. Holds go dark. See
-  [[The Blight (The Enemy)]].
-- **The Long Dark (0–~30)** — a generation of ruin. The orders are all but extinct.
-  Emberhold survives by walling in the light and becomes, in time, just **the Bastion**.
-- **Now (present day)** — the Bastion is half-ruin and failing when **you**, a
-  **Slayer**, arrive. Relics recovered from the wilds and champions felled are the
-  first real progress in thirty years. The town rebuilds around you.
-- **Ahead (story to come)** — pushing toward the **deep wounds**; the truth of the
-  Blight; whether it can be ended or only held.
+- **The Slaying (mythic year 0)** — **Vael** slays **Aldmar**; his body becomes the
+  world ([[The Creation Myth]]). The first people rise from his blood-soaked clay.
+- **The Age of Faiths** — mankind spreads across the Father's body and splinters over
+  *why* Vael killed him. The four readings harden into rival faiths and, in time, rival
+  **city-states** ([[The Faiths and Schism]], [[Factions]]).
+- **The Long Wars (…to recent years)** — centuries of feud among the poleis; phalanx
+  against phalanx; alliances made and broken. The city-state of **Kaethon** is sacked
+  and left a ruin.
+- **The Cult Stirs (recent years)** — the **Ossuary Cult** rises from the Barrowlands,
+  raising the dead; the wars now have a third player that does not stay dead
+  ([[The Dead and the Ossuary Cult]]).
+- **Now (present day)** — a **Slayer** — you — comes to the ruin of Kaethon and begins to
+  rebuild it as **the Bastion**. Relics reclaimed, war-kings broken, and the dead put
+  down are the first order anyone has carved back into the land in a generation.
+- **Ahead (story to come)** — the war-kings ([[Bosses]]), the Cult's "great door," the
+  waking of the Bonereach's Titans — and, perhaps, the two questions no faith can
+  answer: *why did Vael kill Aldmar, and what became of her?*
 
-> Keep this note updated as campaign beats are written — it's the anchor that keeps
-> event dates and references consistent.
+> Keep this note current as campaign beats are written — it anchors every date and
+> reference.
