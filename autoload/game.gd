@@ -35,6 +35,9 @@ func _setup_input() -> void:
 	_bind_key("toggle_inventory", KEY_TAB)
 	_bind_key("toggle_inventory", KEY_I)
 	_bind_key("interact", KEY_E)
+	_bind_key("dodge", KEY_SHIFT)
+	_bind_key("class_ability", KEY_Q)
+	_bind_key("super", KEY_F)
 	_bind_mouse("attack", MOUSE_BUTTON_LEFT)
 	_bind_mouse("block", MOUSE_BUTTON_RIGHT)
 

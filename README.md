@@ -13,22 +13,20 @@ by milestone; each milestone is independently playable.
 
 ---
 
-## Current milestone: **v0.5 — Weapon Archetypes**
+## Current milestone: **v0.6 — Classes & Supers**
 
-Weapons now play completely differently — the **equipped weapon's type drives the
-whole moveset** (Destiny model: any weapon, any class). Six families:
+Pick a **class** at the **Shrine of Paths** in town. Each has a movement ability, a
+class ability, and a chargeable **Super** (fill the meter by dealing damage — Ferocity
+charges it faster):
 
-- **Sword** — fast, balanced diagonal slashes
-- **Greatsword** — slow, heavy overhead that **sweeps every enemy in front**
-- **Battleaxe** — chops that apply a **bleed** damage-over-time
-- **Spear** — quick **long-reach** thrusts (poke and retreat)
-- **Bow** — **hold to draw**, release to fire; full charge = big damage + crit
-- **Crossbow** — fast bolts on a reload cadence
+- **Warden** (tank) — Shoulder Dash · **Barricade** wall · **Ground Slam** super
+- **Stalker** (agile) — Dodge Roll (i-frames) · **Caltrops** · **Blade Storm** super
+- **Runecaster** (mystic) — Blink · **Runic Rift** (heal zone) · **Meteor Storm** super
 
-Each has its own view model, animation, damage/pace/reach, and stamina cost.
-Loot now rolls across all six; equip a new type and the feel changes instantly.
+Abilities: **Shift** = movement, **Q** = class ability, **F** = Super (when full).
+Your class is saved with your character.
 
-Built on: v0.4 hub town + save/load, v0.3 the Slice Zone, v0.2 combat feel, v0.1 loot loop.
+Built on: v0.5 weapon archetypes, v0.4 hub town + save/load, v0.3 Slice Zone, v0.2 combat feel, v0.1 loot loop.
 
 ### Run it
 
@@ -45,7 +43,10 @@ Built on: v0.4 hub town + save/load, v0.3 the Slice Zone, v0.2 combat feel, v0.1
 | **Space** | Jump |
 | **Left click** | Melee swing (costs stamina) — also **gathers** from trees/rocks in town |
 | **Right click (hold)** | Raise shield / block — tap it right as a hit lands to **parry** |
-| **E** | Interact — build/use town plots, vendors |
+| **E** | Interact — build/use town plots, vendors, the class shrine |
+| **Shift** | Movement ability (dash / dodge / blink) |
+| **Q** | Class ability (barricade / caltrops / rift) |
+| **F** | Super (when the meter is full) |
 | **Tab** / **I** | Toggle inventory (equip gear) |
 | **Esc** | Close a vendor/menu |
 
@@ -100,8 +101,8 @@ and progress persists via `SaveManager` (`user://slayer_save.json`).
 | v0.2 | Combat feel: sword swings, block/parry, hit-stop, damage numbers, stamina |
 | v0.3 | The Slice Zone: enemy variety, health bars, chests, Warlord mini-boss |
 | v0.4 | The Hub Town: gather, rebuild town, Blacksmith/Vault vendors, save/load |
-| **v0.5** | **Weapon archetypes: sword/greatsword/axe/spear/bow/crossbow, distinct feel** ← *you are here* |
-| v0.6 | Classes & Supers: 3 classes, movement/class ability + chargeable Super |
+| v0.5 | Weapon archetypes: sword/greatsword/axe/spear/bow/crossbow, distinct feel |
+| **v0.6** | **Classes & Supers: 3 classes, movement/class ability + chargeable Super** ← *you are here* |
 | v0.7 | Living open world: collectibles, public events, world bosses |
 | v0.8 | Crafting & god-rolls + Nemesis Warlords |
 | v0.9 | Progression/meta: char levels, skill trees, reputations, transmog |

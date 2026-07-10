@@ -11,6 +11,9 @@ var block_label: Label
 var toast: Label
 var objective_label: Label
 var resource_label: Label
+var class_label: Label
+var super_bar: ProgressBar
+var ability_label: Label
 var _toast_timer := 0.0
 
 func _ready() -> void:
@@ -66,6 +69,31 @@ func _build() -> void:
 	block_label.add_theme_color_override("font_color", Color("7fb0ff"))
 	block_label.text = ""
 	root.add_child(block_label)
+
+	class_label = Label.new()
+	class_label.position = Vector2(20, 124)
+	class_label.add_theme_font_size_override("font_size", 18)
+	class_label.add_theme_color_override("font_color", Color("cfc0ff"))
+	root.add_child(class_label)
+
+	super_bar = ProgressBar.new()
+	super_bar.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	super_bar.position = Vector2(-160, -70)
+	super_bar.custom_minimum_size = Vector2(320, 14)
+	super_bar.size = Vector2(320, 14)
+	super_bar.max_value = 100
+	super_bar.value = 0
+	super_bar.show_percentage = false
+	var super_fill := StyleBoxFlat.new()
+	super_fill.bg_color = Color("ffcf6a")
+	super_bar.add_theme_stylebox_override("fill", super_fill)
+	root.add_child(super_bar)
+
+	ability_label = Label.new()
+	ability_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
+	ability_label.position = Vector2(-200, -48)
+	ability_label.add_theme_font_size_override("font_size", 16)
+	root.add_child(ability_label)
 
 	toast = Label.new()
 	toast.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
@@ -132,3 +160,14 @@ func _process(delta: float) -> void:
 		stamina_bar.max_value = PlayerStats.max_stamina()
 		stamina_bar.value = p.stamina
 		block_label.text = "◤ BLOCKING" if p.blocking else ""
+		_update_class_hud(p)
+
+func _update_class_hud(p: Player) -> void:
+	var d := ClassDefs.get_def(GameState.player_class)
+	class_label.text = String(d["name"])
+	super_bar.value = p.super_energy
+	var move_txt := "%s [Shift]%s" % [d["move_name"], "" if p.move_cd <= 0.0 else " (%d)" % ceili(p.move_cd)]
+	var abil_txt := "%s [Q]%s" % [d["ability_name"], "" if p.ability_cd <= 0.0 else " (%d)" % ceili(p.ability_cd)]
+	var super_txt := "%s [F] READY!" % d["super_name"] if p.super_energy >= 100.0 else "Super %d%%" % int(p.super_energy)
+	ability_label.text = "%s      %s      %s" % [move_txt, abil_txt, super_txt]
+	ability_label.add_theme_color_override("font_color", Color("ffe08a") if p.super_energy >= 100.0 else Color("d8d8d8"))

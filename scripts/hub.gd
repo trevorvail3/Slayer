@@ -10,6 +10,7 @@ var hud: HUD
 var player: Player
 var blacksmith_ui: BlacksmithUI
 var vault_ui: VaultUI
+var class_ui: ClassSelectUI
 
 func _ready() -> void:
 	_build_environment()
@@ -17,10 +18,17 @@ func _ready() -> void:
 	_add_ui()
 	_spawn_player()
 	_build_town()
+	_spawn_class_shrine()
 	_scatter_resources()
 	_spawn_travel_pad()
 	GameState.town_changed.connect(_update_guidance)
 	_update_guidance()
+
+func _spawn_class_shrine() -> void:
+	var shrine := ClassShrine.new()
+	shrine.on_use = func(): class_ui.open()
+	add_child(shrine)
+	shrine.position = Vector3(7, 0, 3)   # clear of the monument and build plots
 
 func _build_environment() -> void:
 	var light := DirectionalLight3D.new()
@@ -81,6 +89,8 @@ func _add_ui() -> void:
 	layer.add_child(blacksmith_ui)
 	vault_ui = VaultUI.new()
 	layer.add_child(vault_ui)
+	class_ui = ClassSelectUI.new()
+	layer.add_child(class_ui)
 	add_child(layer)
 
 func _spawn_player() -> void:

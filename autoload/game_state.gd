@@ -10,6 +10,7 @@ signal backpack_changed
 signal loot_acquired(item: ItemData)
 signal resources_changed
 signal town_changed
+signal class_changed
 
 var equipped: Dictionary = {}       # Slot (int) -> ItemData
 var backpack: Array[ItemData] = []
@@ -18,6 +19,7 @@ var stash: Array[ItemData] = []
 var resources := {"wood": 0, "stone": 0, "iron": 0}
 var gold := 0
 var town := {}                      # building_id (String) -> built (bool)
+var player_class := ClassDefs.Kind.WARDEN
 
 func _ready() -> void:
 	_equip_starter_gear()
@@ -112,6 +114,10 @@ func spend(cost: Dictionary) -> bool:
 
 # --- Town ---
 
+func set_class(k: int) -> void:
+	player_class = k
+	class_changed.emit()
+
 func set_town_built(id: String) -> void:
 	town[id] = true
 	town_changed.emit()
@@ -145,6 +151,7 @@ func to_dict() -> Dictionary:
 		"resources": resources,
 		"gold": gold,
 		"town": town,
+		"player_class": int(player_class),
 	}
 
 func from_dict(d: Dictionary) -> void:
@@ -163,10 +170,12 @@ func from_dict(d: Dictionary) -> void:
 	resources = {"wood": int(r.get("wood", 0)), "stone": int(r.get("stone", 0)), "iron": int(r.get("iron", 0))}
 	gold = int(d.get("gold", 0))
 	town = d.get("town", {})
+	player_class = int(d.get("player_class", ClassDefs.Kind.WARDEN))
 	equipment_changed.emit()
 	backpack_changed.emit()
 	resources_changed.emit()
 	town_changed.emit()
+	class_changed.emit()
 
 func _item_to_dict(item: ItemData) -> Dictionary:
 	var affs := []

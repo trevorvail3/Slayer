@@ -16,8 +16,8 @@ Rough ordering, not fixed dates. Each milestone ends in a runnable, playable bui
 | v0.3 | **The Slice Zone** — enemy variety, health bars, chests, Warlord mini-boss | ✅ done |
 | v0.4 | **The Hub Town** — gather, rebuild town, Blacksmith/Vault vendors, save/load | ✅ done |
 | v0.5 | **Weapon Archetypes** — sword/greatsword/axe/spear/bow/crossbow, distinct feel | ✅ done |
-| v0.6 | **Classes & Supers** — 3 classes, movement/class ability + chargeable Super | ⬜ next |
-| v0.7 | **Living Open World** — collectibles, public events, world bosses | ⬜ |
+| v0.6 | **Classes & Supers** — 3 classes, movement/class ability + chargeable Super | ✅ done |
+| v0.7 | **Living Open World** — collectibles, public events, world bosses | ⬜ next |
 | v0.8 | **Crafting & god-rolls + Nemesis Warlords** | ⬜ |
 | v0.9 | **Progression/meta** — char levels, skill trees, reputations, transmog | ⬜ |
 | v1.0 | **Story campaign + first Strike** (raids & co-op as post-1.0 stretch) | ⬜ |

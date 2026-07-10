@@ -27,12 +27,21 @@ var health: int = 100
 var stamina: float = 100.0
 var blocking: bool = false
 
+var super_energy := 0.0     # 0..100, charged by dealing damage (Ferocity scales gain)
+var move_cd := 0.0          # movement-ability cooldown remaining
+var ability_cd := 0.0       # class-ability cooldown remaining
+
 var _pitch := 0.0
 var _kick := 0.0
 var _can_attack := true
 var _parry_timer := 0.0
 var _charging := false
 var _charge_t := 0.0
+var _invuln_timer := 0.0
+var _dash_timer := 0.0
+var _dash_vel := Vector3.ZERO
+var _blade_left := 0
+var _meteor_left := 0
 var _swing_tween: Tween
 var _shield_tween: Tween
 
@@ -160,6 +169,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		_set_block(true)
 	elif event.is_action_released("block"):
 		_set_block(false)
+	elif event.is_action_pressed("dodge"):
+		_movement_ability()
+	elif event.is_action_pressed("class_ability"):
+		_class_ability()
+	elif event.is_action_pressed("super"):
+		_activate_super()
 
 # --- Frame updates ---
 
@@ -177,6 +192,13 @@ func _process(delta: float) -> void:
 
 	if not blocking:
 		stamina = minf(PlayerStats.max_stamina(), stamina + STAMINA_REGEN * delta)
+
+	move_cd = maxf(0.0, move_cd - delta)
+	ability_cd = maxf(0.0, ability_cd - delta)
+	_dash_timer = maxf(0.0, _dash_timer - delta)
+	_invuln_timer = maxf(0.0, _invuln_timer - delta)
+	# Passive Super trickle (Ferocity scales it a little).
+	_gain_super(2.5 * delta)
 
 func _physics_process(delta: float) -> void:
 	if not is_on_floor():
@@ -202,6 +224,12 @@ func _physics_process(delta: float) -> void:
 	var dir := transform.basis * Vector3(input_dir.x, 0.0, input_dir.y)
 	velocity.x = dir.x * speed
 	velocity.z = dir.z * speed
+
+	# A dash/dodge burst overrides normal horizontal movement while it lasts.
+	if _dash_timer > 0.0:
+		velocity.x = _dash_vel.x
+		velocity.z = _dash_vel.z
+
 	move_and_slide()
 
 # --- Attacking ---
@@ -296,6 +324,8 @@ func _ray_hit(dmg: int, is_crit: bool, p: Dictionary) -> void:
 	target.call("take_damage", dmg, is_crit, global_position)
 	if p["bleed"] and target.is_in_group("enemy") and target.has_method("apply_bleed"):
 		target.call("apply_bleed", maxi(1, int(dmg * 0.15)), 4)
+	if target.is_in_group("enemy"):
+		_gain_super(9.0 if is_crit else 6.0)
 	Combat.hitstop(0.07, 0.06)
 	_kick += 0.05
 
@@ -314,6 +344,7 @@ func _sweep_hit(dmg: int, is_crit: bool, p: Dictionary) -> void:
 		if fwd.dot(to.normalized()) < 0.35:      # ~70-degree frontal arc
 			continue
 		n.call("take_damage", dmg, is_crit, global_position)
+		_gain_super(5.0)
 		hit = true
 	for g in get_tree().get_nodes_in_group("gatherable"):
 		var gn := g as Node3D
@@ -336,12 +367,154 @@ func _fire_projectile(p: Dictionary, charge_frac: float) -> void:
 	arrow.global_position = camera.global_position + dir * 0.6
 	var crit := PlayerStats.crit_chance() + (0.15 if charge_frac >= 0.95 else 0.0)
 	arrow.setup(dir, 45.0, dmg, crit)
+	_gain_super(6.0)
 	_kick += 0.05
 	if weapon:
 		var rest: Vector3 = p["rest_pos"]
 		weapon.position = rest + Vector3(0, 0, 0.12)
 		var t := create_tween()
 		t.tween_property(weapon, "position", rest, 0.12)
+
+# --- Class abilities & Super (driven by GameState.player_class) ---
+
+func _gain_super(amount: float) -> void:
+	var mult := 1.0 + GameState.total_stat("ferocity") * 0.03
+	super_energy = minf(100.0, super_energy + amount * mult)
+
+func _facing_flat() -> Vector3:
+	var f := -camera.global_transform.basis.z
+	f.y = 0.0
+	return f.normalized()
+
+func _movement_ability() -> void:
+	if move_cd > 0.0 or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
+	var d := ClassDefs.get_def(GameState.player_class)
+	move_cd = float(d["move_cd"])
+	match GameState.player_class:
+		ClassDefs.Kind.STALKER:
+			var dir := transform.basis * Vector3(_move_input().x, 0.0, _move_input().y)
+			if dir.length() < 0.1:
+				dir = -_facing_flat()   # dodge backward if standing still
+			_dash_vel = dir.normalized() * 12.0
+			_dash_timer = 0.22
+			_invuln_timer = 0.45
+		ClassDefs.Kind.RUNECASTER:
+			_blink(8.0)
+		_:  # WARDEN shoulder dash
+			_dash_vel = _facing_flat() * 13.0
+			_dash_timer = 0.24
+
+func _move_input() -> Vector2:
+	var v := Vector2.ZERO
+	if Input.is_action_pressed("move_forward"): v.y -= 1.0
+	if Input.is_action_pressed("move_back"): v.y += 1.0
+	if Input.is_action_pressed("move_left"): v.x -= 1.0
+	if Input.is_action_pressed("move_right"): v.x += 1.0
+	return v
+
+func _blink(dist: float) -> void:
+	var fwd := _facing_flat()
+	var from := global_position + Vector3(0, 1.0, 0)
+	var space := get_world_3d().direct_space_state
+	var query := PhysicsRayQueryParameters3D.create(from, from + fwd * dist)
+	query.exclude = [self]
+	var hit := space.intersect_ray(query)
+	var travel := dist
+	if hit:
+		travel = maxf(0.5, from.distance_to(hit.position) - 1.0)
+	global_position += fwd * travel
+
+func _class_ability() -> void:
+	if ability_cd > 0.0 or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
+	var d := ClassDefs.get_def(GameState.player_class)
+	ability_cd = float(d["ability_cd"])
+	var ground := global_position + _facing_flat() * 2.5
+	ground.y = 0.0
+	match GameState.player_class:
+		ClassDefs.Kind.STALKER:
+			var c := Caltrops.new()
+			c.damage = int(6 + GameState.gear_score() * 0.3)
+			get_tree().current_scene.add_child(c)
+			c.global_position = ground
+		ClassDefs.Kind.RUNECASTER:
+			var r := Rift.new()
+			r.heal_amount = int(PlayerStats.max_health() * 0.04)
+			get_tree().current_scene.add_child(r)
+			r.global_position = ground
+		_:  # WARDEN barricade
+			var b := Barricade.new()
+			get_tree().current_scene.add_child(b)
+			b.global_position = ground
+			b.rotation.y = rotation.y
+
+func _activate_super() -> void:
+	if super_energy < 100.0 or Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		return
+	super_energy = 0.0
+	match GameState.player_class:
+		ClassDefs.Kind.STALKER:
+			_blade_left = 8
+			_blade_tick()
+		ClassDefs.Kind.RUNECASTER:
+			_meteor_left = 6
+			_meteor_tick()
+		_:
+			_super_ground_slam()
+
+func _super_ground_slam() -> void:
+	var burst := SuperBurst.new()
+	get_tree().current_scene.add_child(burst)
+	burst.global_position = global_position
+	burst.play(8.0, Color("6a9aff"))
+	_aoe_damage(global_position, 8.0, int(PlayerStats.attack_damage() * 4.0), true)
+	Combat.hitstop(0.12, 0.05)
+	_kick += 0.2
+
+func _blade_tick() -> void:
+	if _blade_left <= 0:
+		return
+	_blade_left -= 1
+	var burst := SuperBurst.new()
+	get_tree().current_scene.add_child(burst)
+	burst.global_position = global_position + _facing_flat() * 1.5 + Vector3(0, 1.0, 0)
+	burst.play(3.0, Color("6ad06a"))
+	_aoe_damage(global_position, 6.0, int(PlayerStats.attack_damage() * 1.1), false)
+	_kick += 0.06
+	get_tree().create_timer(0.16).timeout.connect(_blade_tick)
+
+func _meteor_tick() -> void:
+	if _meteor_left <= 0:
+		return
+	_meteor_left -= 1
+	var center := _pick_meteor_target()
+	var burst := SuperBurst.new()
+	get_tree().current_scene.add_child(burst)
+	burst.global_position = center
+	burst.play(4.0, Color("b060ff"))
+	_aoe_damage(center, 4.0, int(PlayerStats.attack_damage() * 2.2), true)
+	get_tree().create_timer(0.32).timeout.connect(_meteor_tick)
+
+func _pick_meteor_target() -> Vector3:
+	var enemies := get_tree().get_nodes_in_group("enemy")
+	if enemies.size() > 0:
+		var e := enemies[randi() % enemies.size()] as Node3D
+		if e:
+			return e.global_position
+	return global_position + _facing_flat() * randf_range(4.0, 8.0) + Vector3(randf_range(-3, 3), 0, randf_range(-3, 3))
+
+func _aoe_damage(center: Vector3, radius: float, dmg: int, knock_from_center: bool) -> void:
+	for e in get_tree().get_nodes_in_group("enemy"):
+		var n := e as Node3D
+		if n == null:
+			continue
+		if n.global_position.distance_to(center) <= radius and n.has_method("take_damage"):
+			var src := center if knock_from_center else global_position
+			n.call("take_damage", dmg, true, src)
+
+func heal(amount: int) -> void:
+	health = mini(PlayerStats.max_health(), health + amount)
 
 # --- Blocking / parrying ---
 
@@ -364,6 +537,8 @@ func _animate_shield(up: bool) -> void:
 # --- Taking damage ---
 
 func take_damage(amount: int, attacker: Node = null) -> void:
+	if _invuln_timer > 0.0:
+		return   # Stalker dodge i-frames
 	if blocking:
 		if _parry_timer > 0.0 and attacker and attacker.has_method("stagger"):
 			attacker.call("stagger", PARRY_STAGGER)

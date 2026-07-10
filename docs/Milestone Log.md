@@ -55,3 +55,15 @@ families, each with its own view model, animation, damage/pace/reach, and trait:
 
 Central table in `data/weapon_defs.gd`; loot rolls across all six; inventory shows
 each weapon's type.
+
+## v0.6 — Classes & Supers
+Pick a **class** at the **Shrine of Paths** in town (saved with your character).
+Three classes, each with a movement ability, a class ability, and a chargeable
+**Super** (fills from dealing damage; **Ferocity** charges it faster):
+- **Warden** (tank) — Shoulder Dash · Barricade (temp wall) · **Ground Slam** (AoE)
+- **Stalker** (agile) — Dodge Roll (i-frames) · Caltrops (ground DoT) · **Blade Storm** (rapid AoE)
+- **Runecaster** (mystic) — Blink · Runic Rift (heal zone) · **Meteor Storm** (rain of AoE)
+
+Inputs: **Shift** movement · **Q** class ability · **F** Super. HUD gains a class
+label, Super meter, and ability-cooldown readout. Class defs in `data/class_defs.gd`;
+ability objects in `scripts/abilities/`.
