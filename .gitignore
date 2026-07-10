@@ -13,3 +13,7 @@ mono_crash.*.json
 # OS / editor cruft
 .DS_Store
 *.tmp
+
+# Obsidian per-machine config (docs/ notes ARE tracked; the app config is not)
+.obsidian/
+docs/.obsidian/
