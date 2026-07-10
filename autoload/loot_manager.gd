@@ -49,17 +49,78 @@ func _roll_rarity(rarities: Array[Rarity]) -> Rarity:
 			return r
 	return rarities[0]
 
-## Re-roll an existing item's affixes in place (Blacksmith reforge → god-roll chase).
+## Re-roll an existing item's affixes in place (simple full reroll).
 func reroll_affixes(item: ItemData) -> void:
 	if item.rarity == null:
 		return
 	item.affixes = _roll_affixes(item.rarity, item.power)
 
+## Reforge for the god-roll chase (v0.9). Rerolls the item's affixes, but:
+##   locked_indices — affix slots to preserve verbatim across the reroll.
+##   focus_stat     — if set (and not already present on a locked affix),
+##                    guarantees one freshly-rolled slot rolls this stat.
+## Locking/focusing is the *targeting*: the Forge charges godshard for it.
+func reforge(item: ItemData, locked_indices: Array = [], focus_stat: String = "") -> void:
+	if item.rarity == null:
+		return
+	var count: int = item.rarity.affix_count
+	var result: Array[Affix] = []
+	result.resize(count)
+	var focus_present := false
+	for i in count:
+		if locked_indices.has(i) and i < item.affixes.size():
+			result[i] = item.affixes[i]
+			if focus_stat != "" and item.affixes[i].stat == focus_stat:
+				focus_present = true
+	var first_open := -1
+	for i in count:
+		if result[i] == null and first_open == -1:
+			first_open = i
+	for i in count:
+		if result[i] == null:
+			var forced := ""
+			if focus_stat != "" and not focus_present and i == first_open:
+				forced = focus_stat
+				focus_present = true
+			result[i] = _roll_one_affix(item.power, forced)
+	item.affixes = result
+
+# --- Affix roll math (single source of truth for value bounds + quality) ---
+
+## Lowest possible value for an affix rolled at this power.
+func affix_min(source_power: int) -> int:
+	return 3 + int(source_power / 4)
+
+## Highest possible value for an affix rolled at this power.
+func affix_max(source_power: int) -> int:
+	return affix_min(source_power) * 2
+
+## How good a rolled value is, 0.0 (floor) .. 1.0 (max) — drives the star rating.
+func affix_quality(value: int, source_power: int) -> float:
+	var lo := affix_min(source_power)
+	var hi := affix_max(source_power)
+	if hi <= lo:
+		return 1.0
+	return clampf(float(value - lo) / float(hi - lo), 0.0, 1.0)
+
+## A "god roll": a multi-affix item where the affixes average near-max quality.
+func is_god_roll(item: ItemData) -> bool:
+	if item.affixes.size() < 2:
+		return false
+	var sum := 0.0
+	for a in item.affixes:
+		sum += affix_quality(a.value, item.power)
+	return (sum / item.affixes.size()) >= 0.8
+
+func _roll_one_affix(source_power: int, forced_stat: String = "") -> Affix:
+	var stat := forced_stat
+	if stat == "":
+		stat = STATS[rng.randi_range(0, STATS.size() - 1)]
+	var lo := affix_min(source_power)
+	return Affix.new(stat, lo + rng.randi_range(0, lo))
+
 func _roll_affixes(rarity: Rarity, source_power: int) -> Array[Affix]:
 	var result: Array[Affix] = []
-	var base_val := 3 + int(source_power / 4)
 	for i in rarity.affix_count:
-		var stat: String = STATS[rng.randi_range(0, STATS.size() - 1)]
-		var value := base_val + rng.randi_range(0, base_val)
-		result.append(Affix.new(stat, value))
+		result.append(_roll_one_affix(source_power))
 	return result

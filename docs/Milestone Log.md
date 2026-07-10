@@ -137,3 +137,26 @@ The wilds became a real patrol destination, mapped to [[Regions and City-States]
   New headless test locks the floor behavior.
 - **Traversal** — auto-run after ~1s of forward movement (+35% speed, FOV widens).
 
+## v0.9 — Crafting & god-rolls
+The bottomless loot-chase pillar: turn the flood of drops into a currency and give the
+Forge real *targeting* so a great item is something you can build toward, not just pray for.
+- **Salvage** — break down unwanted gear (backpack only) into crafting materials.
+  Per-item **Salvage** buttons + a **"Salvage all Common / Uncommon"** one-click for the
+  trash. Yields scale with rarity & power; rarity index is derived from `affix_count`, so
+  the math needs no Catalog lookup and stays testable.
+- **Two materials** — **Emberdust** (bulk, from every salvage) and **Godshard** (premium,
+  only from Rare+). Both live in `GameState.resources`; `from_dict` now *merges* saved
+  resources over the defaults, so materials added in future versions default to 0 on old
+  saves instead of vanishing.
+- **Reforge, upgraded (`LootManager.reforge`)** — instead of a blind full re-roll you can
+  **lock** the affixes you want to keep (preserved verbatim) and **focus** a stat
+  (guarantees one fresh affix rolls it). Locking/focusing is the targeting, so it spends
+  **Godshard**; a plain re-roll spends **Emberdust**.
+- **God-roll readout** — a single roll-value formula in `LootManager` (`affix_min/max`)
+  now also drives **`affix_quality` (0→1)**. The Forge shows per-affix **★ ratings** and a
+  **"★ GOD ROLL ★"** banner when a multi-affix item averages near-max quality.
+- **UI/economy plumbing** — materials shown on the HUD readout, the inventory stats panel,
+  and the Forge cost line. Four new headless tests cover salvage yields, lock preservation,
+  focus guarantee, and quality bounds.
+- *Deferred:* **Nemesis war-kings** (the emergent-rival half of v0.9) → tracked as v0.9b.
+

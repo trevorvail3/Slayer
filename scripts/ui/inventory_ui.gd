@@ -14,6 +14,7 @@ func _ready() -> void:
 	visible = false
 	GameState.equipment_changed.connect(_refresh)
 	GameState.backpack_changed.connect(_refresh)
+	GameState.resources_changed.connect(_refresh)
 
 func _build() -> void:
 	theme = UITheme.get_theme()
@@ -54,9 +55,13 @@ func _build() -> void:
 	var right := VBoxContainer.new()
 	right.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var right_title := Label.new()
-	right_title.text = "BACKPACK  —  click to equip"
+	right_title.text = "BACKPACK  —  click to equip, or Salvage for materials"
 	right_title.add_theme_font_size_override("font_size", 26)
 	right.add_child(right_title)
+	var salvage_all := Button.new()
+	salvage_all.text = "Salvage all Common / Uncommon"
+	salvage_all.pressed.connect(_on_salvage_all_pressed)
+	right.add_child(salvage_all)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	backpack_box = VBoxContainer.new()
@@ -96,17 +101,22 @@ func _refresh() -> void:
 			label.text = "%s: (empty)" % slot_name
 		equipped_box.add_child(label)
 
-	stats_label.text = "\nPOWER LEVEL:  %d\n\nMight %d    Vigor %d    Fortitude %d\nSwiftness %d    Ferocity %d" % [
+	stats_label.text = "\nPOWER LEVEL:  %d\n\nMight %d    Vigor %d    Fortitude %d\nSwiftness %d    Ferocity %d\n\nEmberdust %d    Godshard %d" % [
 		GameState.gear_score(),
 		GameState.total_stat("might"),
 		GameState.total_stat("vigor"),
 		GameState.total_stat("fortitude"),
 		GameState.total_stat("swiftness"),
 		GameState.total_stat("ferocity"),
+		GameState.resources.get("emberdust", 0),
+		GameState.resources.get("godshard", 0),
 	]
 
 	for item in GameState.backpack:
+		var row := HBoxContainer.new()
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var b := Button.new()
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var affix_txt := ""
 		for a in item.affixes:
 			affix_txt += "  " + a.describe()
@@ -114,7 +124,16 @@ func _refresh() -> void:
 		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		b.add_theme_color_override("font_color", item.display_color())
 		b.pressed.connect(_on_equip_pressed.bind(item))
-		backpack_box.add_child(b)
+		row.add_child(b)
+		var sv := Button.new()
+		var y := GameState.salvage_yield(item)
+		sv.text = "Salvage (+%d)" % int(y.get("emberdust", 0))
+		sv.tooltip_text = "Break down for %d Emberdust%s" % [
+			int(y.get("emberdust", 0)),
+			("" if int(y.get("godshard", 0)) == 0 else ", %d Godshard" % int(y.get("godshard", 0)))]
+		sv.pressed.connect(_on_salvage_pressed.bind(item))
+		row.add_child(sv)
+		backpack_box.add_child(row)
 
 func _wtype_suffix(item: ItemData) -> String:
 	if item.slot == ItemData.Slot.WEAPON and item.weapon_type != ItemData.WeaponType.NONE:
@@ -123,3 +142,9 @@ func _wtype_suffix(item: ItemData) -> String:
 
 func _on_equip_pressed(item: ItemData) -> void:
 	GameState.equip(item)
+
+func _on_salvage_pressed(item: ItemData) -> void:
+	GameState.salvage(item)
+
+func _on_salvage_all_pressed() -> void:
+	GameState.salvage_all_trash()

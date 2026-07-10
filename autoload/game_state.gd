@@ -17,7 +17,9 @@ var equipped: Dictionary = {}       # Slot (int) -> ItemData
 var backpack: Array[ItemData] = []
 var stash: Array[ItemData] = []
 
-var resources := {"wood": 0, "stone": 0, "iron": 0}
+## wood/stone/iron are gathered in the world; emberdust/godshard are crafting
+## materials recovered by salvaging loot (v0.9). All spend via can_afford/spend.
+var resources := {"wood": 0, "stone": 0, "iron": 0, "emberdust": 0, "godshard": 0}
 var gold := 0
 var town := {}                      # building_id (String) -> built (bool)
 var player_class := ClassDefs.Kind.WARDEN
@@ -99,6 +101,47 @@ func add_relic() -> void:
 	relic_found.emit(relics_found)
 	resources_changed.emit()
 
+# --- Crafting: salvage loot into materials (v0.9) ---
+
+## Materials an item yields when broken down. Pure/deterministic so tests and the
+## UI preview agree. Rarity index is derived from affix_count (Common=1..Exotic=5)
+## so this needs no Catalog lookup. godshard (premium) only from Rare+.
+func salvage_yield(item: ItemData) -> Dictionary:
+	if item == null or item.rarity == null:
+		return {"emberdust": 0, "godshard": 0}
+	var ri: int = maxi(0, item.rarity.affix_count - 1)
+	var ember: int = 2 + ri * 3 + int(item.power / 8.0)
+	var shard: int = 0
+	if ri >= 2:
+		shard = ri - 1   # Rare 1 · Legendary 2 · Exotic 3
+	return {"emberdust": ember, "godshard": shard}
+
+## Break a backpack item down into materials. Only unequipped gear is salvageable.
+func salvage(item: ItemData) -> Dictionary:
+	if not backpack.has(item):
+		return {"emberdust": 0, "godshard": 0}
+	var y := salvage_yield(item)
+	backpack.erase(item)
+	for k in y:
+		if int(y[k]) > 0:
+			resources[k] = int(resources.get(k, 0)) + int(y[k])
+	backpack_changed.emit()
+	resources_changed.emit()
+	return y
+
+## Salvage every Common/Uncommon in the backpack at once (dismantle-the-blues QoL).
+func salvage_all_trash() -> Dictionary:
+	var total := {"emberdust": 0, "godshard": 0}
+	var doomed: Array[ItemData] = []
+	for it in backpack:
+		if it.rarity != null and it.rarity.affix_count <= 2:
+			doomed.append(it)
+	for it in doomed:
+		var y := salvage(it)
+		for k in y:
+			total[k] = int(total.get(k, 0)) + int(y[k])
+	return total
+
 func can_afford(cost: Dictionary) -> bool:
 	for k in cost:
 		if k == "gold":
@@ -174,8 +217,12 @@ func from_dict(d: Dictionary) -> void:
 	stash.clear()
 	for e in d.get("stash", []):
 		stash.append(_item_from_dict(e))
+	# Merge saved resources over the defaults so new material types (added in
+	# later versions) default to 0 for old saves instead of vanishing.
 	var r: Dictionary = d.get("resources", {})
-	resources = {"wood": int(r.get("wood", 0)), "stone": int(r.get("stone", 0)), "iron": int(r.get("iron", 0))}
+	resources = {"wood": 0, "stone": 0, "iron": 0, "emberdust": 0, "godshard": 0}
+	for k in r:
+		resources[k] = int(r[k])
 	gold = int(d.get("gold", 0))
 	town = d.get("town", {})
 	player_class = int(d.get("player_class", ClassDefs.Kind.WARDEN))

@@ -21,10 +21,15 @@ A map of the codebase so the vault documents the code, not just the vision.
 
 ## Autoloads (singletons)
 - `Catalog` — content definitions (rarities, base items incl. weapon types, building defs).
-- `LootManager` — `roll_item(power, table, min_rarity_index)`, `reroll_affixes(item)`.
+- `LootManager` — `roll_item(power, table, min_rarity_index)`, `reroll_affixes(item)`;
+  **crafting (v0.9):** `reforge(item, locked_indices, focus_stat)` (lock keepers, guarantee
+  a focused stat, re-roll the rest); `affix_min/affix_max/affix_quality` (the single
+  roll-value formula, also the 0→1 quality metric) and `is_god_roll(item)`.
 - `GameState` — equipped/backpack/stash, resources, gold, town; `gear_score()`,
-  `total_stat()`, `can_afford()`/`spend()`; `to_dict()`/`from_dict()`; emits
-  `equipment_changed`, `backpack_changed`, `resources_changed`, `town_changed`.
+  `total_stat()`, `can_afford()`/`spend()`; **crafting (v0.9):** `emberdust`/`godshard`
+  materials in `resources` (`from_dict` merges over defaults so new mats survive old saves),
+  `salvage_yield(item)` / `salvage(item)` / `salvage_all_trash()`; `to_dict()`/`from_dict()`;
+  emits `equipment_changed`, `backpack_changed`, `resources_changed`, `town_changed`.
 - `Combat` — hit-stop (unscaled) + floating damage numbers.
 - `SaveManager` — save/load/has_save/delete.
 - `Game` — shared input map, **Hub↔Zone travel** (`goto_hub`/`goto_zone`), `menu_open`,

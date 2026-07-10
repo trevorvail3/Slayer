@@ -13,9 +13,22 @@ by milestone; each milestone is independently playable.
 
 ---
 
-## Current milestone: **v0.8 — The Reach**
+## Current milestone: **v0.9 — Crafting & god-rolls**
 
-The wilds are now a **Cosmodrome-scale patrol zone**: five named lore regions, each
+The loot flood is now a **currency and a craft.** Break down gear you don't want into
+materials, then use them at **the Forge** to chase a *god roll* on purpose:
+
+- **Salvage** unwanted backpack items into **Emberdust** (bulk) and **Godshard** (premium,
+  Rare+ only) — with a one-click **"Salvage all Common / Uncommon"** for the trash.
+- **Reforge** at Bruna's forge: **lock** the affixes you want to keep, **focus** a target
+  stat to guarantee it, and re-roll the rest. Locking/focusing spends Godshard; a plain
+  re-roll spends Emberdust.
+- Every affix now shows a **★ quality rating**, and a **"★ GOD ROLL ★"** banner lights up
+  when a piece rolls near-perfect across the board. That's the item you keep forever.
+
+Built on **v0.8 — The Reach:**
+
+The wilds are a **Cosmodrome-scale patrol zone**: five named lore regions, each
 with its own terrain, landmarks, danger level, and enemy roster — with a Destiny-style
 **discovery banner** as you cross into each:
 
@@ -124,7 +137,8 @@ and progress persists via `SaveManager` (`user://slayer_save.json`).
 | v0.5 | Weapon archetypes: sword/greatsword/axe/spear/bow/crossbow, distinct feel |
 | v0.6 | Classes & Supers: 3 classes, movement/class ability + chargeable Super |
 | v0.7 | Living open world: relics, public events, world boss |
-| **v0.8** | **The Reach: Cosmodrome-scale zone, 5 regions, elites, beasts, loot scarcity** ← *you are here* |
-| v0.9 | Crafting & god-rolls + Nemesis war-kings |
+| v0.8 | The Reach: Cosmodrome-scale zone, 5 regions, elites, beasts, loot scarcity |
+| **v0.9** | **Crafting & god-rolls: salvage → materials, reforge with lock + focus, quality/god-roll readout** ← *you are here* |
+| v0.9b | Nemesis war-kings (emergent rivals — second half of v0.9) |
 | v0.95 | Progression/meta: char levels, skill trees, faction reputation, transmog |
 | v1.0 | Story campaign + first Strike (raids & co-op post-1.0) |

@@ -175,9 +175,10 @@ func notify(text: String, color := Color(0.9, 0.9, 0.9)) -> void:
 
 func _refresh_resources() -> void:
 	if resource_label:
-		resource_label.text = "Gold %d    Wood %d    Stone %d    Iron %d    Relics %d" % [
+		resource_label.text = "Gold %d    Wood %d    Stone %d    Iron %d    Ember %d    Shard %d    Relics %d" % [
 			GameState.gold, GameState.resources.get("wood", 0),
 			GameState.resources.get("stone", 0), GameState.resources.get("iron", 0),
+			GameState.resources.get("emberdust", 0), GameState.resources.get("godshard", 0),
 			GameState.relics_found]
 
 func _refresh() -> void:

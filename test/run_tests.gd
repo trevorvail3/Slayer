@@ -15,6 +15,10 @@ func _initialize() -> void:
 	fails += _t("min_rarity_floor_respected", _test_min_rarity_floor())
 	fails += _t("can_afford_and_spend_math", _test_can_afford_spend())
 	fails += _t("upgrade_raises_power_and_score", _test_upgrade_raises_power())
+	fails += _t("salvage_yield_scales_with_rarity", _test_salvage_yield())
+	fails += _t("reforge_preserves_locked_affixes", _test_reforge_preserves_locked())
+	fails += _t("reforge_focus_guarantees_stat", _test_reforge_focus())
+	fails += _t("affix_quality_stays_in_bounds", _test_affix_quality_bounds())
 	fails += _t("save_roundtrip_preserves_state", _test_save_roundtrip())
 
 	if fails == 0:
@@ -148,6 +152,72 @@ func _test_upgrade_raises_power() -> bool:
 	var w := gs.equipped[ItemData.Slot.WEAPON] as ItemData
 	w.power += 30   # simulate a Blacksmith upgrade
 	return gs.gear_score() > before
+
+## Salvage yields more materials for higher rarity, and godshard only from Rare+.
+func _test_salvage_yield() -> bool:
+	var cat = _new_catalog()
+	var gs = _new_state()
+	var common := ItemData.new()
+	common.rarity = cat.rarities[0]
+	common.power = 40
+	var exotic := ItemData.new()
+	exotic.rarity = cat.rarities[4]
+	exotic.power = 40
+	var cy := gs.salvage_yield(common)
+	var ey := gs.salvage_yield(exotic)
+	if int(ey["emberdust"]) <= int(cy["emberdust"]):
+		return false
+	if int(cy["godshard"]) != 0:
+		return false
+	if int(ey["godshard"]) <= 0:
+		return false
+	var rare := ItemData.new()
+	rare.rarity = cat.rarities[2]
+	rare.power = 40
+	return int(gs.salvage_yield(rare)["godshard"]) > 0
+
+## Locked affixes survive a reforge verbatim; unlocked slots get re-rolled.
+func _test_reforge_preserves_locked() -> bool:
+	var cat = _new_catalog()
+	var lm = _new_loot(123)
+	var it := ItemData.new()
+	it.rarity = cat.rarities[2]   # Rare -> 3 affixes
+	it.power = 40
+	it.affixes = [Affix.new("might", 999), Affix.new("vigor", 1), Affix.new("vigor", 1)]
+	lm.reforge(it, [0], "")
+	if it.affixes.size() != 3:
+		return false
+	return it.affixes[0].stat == "might" and it.affixes[0].value == 999
+
+## Focusing a stat guarantees at least one affix rolls it, every time.
+func _test_reforge_focus() -> bool:
+	var cat = _new_catalog()
+	var lm = _new_loot(7)
+	for trial in 40:
+		var it := ItemData.new()
+		it.rarity = cat.rarities[2]
+		it.power = 30
+		it.affixes = [Affix.new("might", 5), Affix.new("might", 5), Affix.new("might", 5)]
+		lm.reforge(it, [], "ferocity")
+		var found := false
+		for a in it.affixes:
+			if a.stat == "ferocity":
+				found = true
+		if not found:
+			return false
+	return true
+
+## Quality maps the floor value to 0.0 and the max to 1.0, clamped in between.
+func _test_affix_quality_bounds() -> bool:
+	var lm = _new_loot(1)
+	var lo := lm.affix_min(50)
+	var hi := lm.affix_max(50)
+	if lm.affix_quality(lo, 50) != 0.0:
+		return false
+	if lm.affix_quality(hi, 50) != 1.0:
+		return false
+	var mid := lm.affix_quality(int((lo + hi) / 2.0), 50)
+	return mid >= 0.0 and mid <= 1.0
 
 ## Full round-trip needs the Catalog autoload (rarity resolution). Uses the real
 ## autoloads if the headless run provides them; skips gracefully if not.
