@@ -17,12 +17,13 @@ const BLOCK_REDUCTION := 0.7       # 70% less damage while blocking
 const PARRY_WINDOW := 0.25         # seconds after raising block that a hit parries
 const PARRY_STAGGER := 1.3         # seconds the enemy is staggered on parry
 
-# View-model poses (local to the camera).
-const WEAPON_REST_POS := Vector3(0.36, -0.30, -0.55)
-const WEAPON_REST_ROT := Vector3(6, -4, 4)
-const WEAPON_WINDUP_ROT := Vector3(-45, 35, 45)
-const WEAPON_STRIKE_ROT := Vector3(35, -35, -55)
-const SHIELD_HIDDEN_POS := Vector3(-0.55, -0.75, -0.5)
+# View-model poses (local to the camera). The blade runs along local -Z, so the
+# rest pose tilts it UP and ACROSS the view (not end-on) to actually be visible.
+const WEAPON_REST_POS := Vector3(0.33, -0.40, -0.55)
+const WEAPON_REST_ROT := Vector3(52, 18, 8)
+const WEAPON_WINDUP_ROT := Vector3(80, 55, 24)     # cocked up over the shoulder
+const WEAPON_STRIKE_ROT := Vector3(16, -44, -40)   # slashed down and across
+const SHIELD_HIDDEN_POS := Vector3(-0.55, -0.85, -0.5)
 const SHIELD_BLOCK_POS := Vector3(-0.28, -0.22, -0.42)
 
 var camera: Camera3D
@@ -78,14 +79,14 @@ func _build() -> void:
 
 func _make_weapon() -> Node3D:
 	var root := Node3D.new()
-	# Blade
-	root.add_child(_box(Vector3(0.06, 0.06, 1.0), Vector3(0, 0, -0.5), Color("c9ccd6")))
+	# Blade (wide + flat so it reads as a blade, long along -Z)
+	root.add_child(_box(Vector3(0.11, 0.03, 0.95), Vector3(0, 0, -0.5), Color("d6dae4")))
 	# Cross-guard
-	root.add_child(_box(Vector3(0.30, 0.06, 0.06), Vector3(0, 0, 0.02), Color("8a8f99")))
+	root.add_child(_box(Vector3(0.34, 0.07, 0.07), Vector3(0, 0, 0.02), Color("9aa0ab")))
 	# Handle
-	root.add_child(_box(Vector3(0.05, 0.05, 0.22), Vector3(0, 0, 0.15), Color("5a3a22")))
+	root.add_child(_box(Vector3(0.05, 0.05, 0.24), Vector3(0, 0, 0.16), Color("5a3a22")))
 	# Pommel
-	root.add_child(_box(Vector3(0.09, 0.09, 0.06), Vector3(0, 0, 0.28), Color("8a8f99")))
+	root.add_child(_box(Vector3(0.10, 0.10, 0.07), Vector3(0, 0, 0.30), Color("c9a24a")))
 	return root
 
 func _make_shield() -> Node3D:
@@ -102,6 +103,10 @@ func _box(size: Vector3, pos: Vector3, color: Color) -> MeshInstance3D:
 	m.mesh = mesh
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = color
+	# Self-lit so the view model is always clearly visible regardless of scene lighting.
+	mat.emission_enabled = true
+	mat.emission = color
+	mat.emission_energy_multiplier = 0.4
 	m.material_override = mat
 	m.position = pos
 	return m
