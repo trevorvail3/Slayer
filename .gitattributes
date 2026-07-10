@@ -1,0 +1,14 @@
+# Treat art/binary assets as binary so Windows line-ending conversion never
+# corrupts them on checkout, and git doesn't try to diff/merge them.
+*.hdr   binary
+*.exr   binary
+*.glb   binary
+*.gltf  binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.ktx2  binary
+*.ogg   binary
+*.wav   binary
+*.mp3   binary
