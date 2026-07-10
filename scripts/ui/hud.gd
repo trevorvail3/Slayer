@@ -121,20 +121,6 @@ func _build() -> void:
 	region_box.add_child(region_sub)
 	root.add_child(region_box)
 
-## Big fading "area discovered" banner.
-func show_region(title: String, sub: String = "") -> void:
-	if region_title == null:
-		return
-	region_title.text = title.to_upper()
-	region_sub.text = sub
-	if _region_tween and _region_tween.is_valid():
-		_region_tween.kill()
-	region_box.modulate.a = 0.0
-	_region_tween = create_tween()
-	_region_tween.tween_property(region_box, "modulate:a", 1.0, 0.45)
-	_region_tween.tween_interval(2.4)
-	_region_tween.tween_property(region_box, "modulate:a", 0.0, 0.9)
-
 	toast = Label.new()
 	toast.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	toast.position -= Vector2(180, 90)
@@ -161,6 +147,20 @@ func show_region(title: String, sub: String = "") -> void:
 	resource_label.add_theme_color_override("font_color", Color("e6d29a"))
 	resource_label.text = ""
 	root.add_child(resource_label)
+
+## Big fading "area discovered" banner.
+func show_region(title: String, sub: String = "") -> void:
+	if region_title == null:
+		return
+	region_title.text = title.to_upper()
+	region_sub.text = sub
+	if _region_tween and _region_tween.is_valid():
+		_region_tween.kill()
+	region_box.modulate.a = 0.0
+	_region_tween = create_tween()
+	_region_tween.tween_property(region_box, "modulate:a", 1.0, 0.45)
+	_region_tween.tween_interval(2.4)
+	_region_tween.tween_property(region_box, "modulate:a", 0.0, 0.9)
 
 func set_objective(text: String) -> void:
 	if objective_label:
