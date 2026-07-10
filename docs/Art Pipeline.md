@@ -82,8 +82,20 @@ mapping, normal/roughness maps), tunes tiling, and keeps the fallbacks intact.
   great with the toon outline we already apply.
 
 ## Status
-- ✅ Scaffolding in: `AssetLoader`, `assets/` folders + READMEs, auto-loaded sky
+- ✅ Scaffolding: `AssetLoader`, `assets/` folders + READMEs, auto-loaded sky
   (hub + zone) and ground textures (town + 5 regions).
-- ⬜ First real assets (you): a `zone.hdr`, two ground textures, one animated
-  Quaternius creature — then Claude wires the creature.
-- ⬜ Later: weapon view-models, normal/roughness maps, Mixamo humanoid bosses.
+- ✅ Starter CC0 art shopped & committed: `zone.hdr` (Venice Sunset) +
+  `hub.hdr` (Spruit Sunrise), both auto-loaded; `Fox.glb` (animated).
+- ✅ **Beast enemy auto-loads `Fox.glb`** — auto-fitted to size, clips
+  Survey/Walk/Run driven by AI state, falls back to the box-rig if absent.
+  Knobs in `enemy.gd`: `BEAST_MODEL_PATH`, `MODEL_FACE_YAW` (flip to PI if the
+  creature faces backward).
+- ⬜ You: grab ground textures (Poly Haven, blocked from the agent — manual) and
+  optionally a Quaternius wolf to replace the Fox.
+- ⬜ Later: weapon view-models, humanoid enemy models, normal/roughness maps.
+
+## Auto-fit (why models don't need magic numbers)
+`AssetLoader.fit_to_size(inst, target)` measures a model's real bounding box and
+uniformly scales it so its longest side = `target`, then seats it on the ground.
+So any model you drop is sized correctly regardless of the units it shipped in —
+the Fox is authored at ~155 units and just works.

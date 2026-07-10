@@ -115,6 +115,49 @@ static func play_anim(ap: AnimationPlayer, candidates: Array, loop := true) -> b
 				return true
 	return false
 
+## Combined bounding box of every MeshInstance3D under `root`, in root-local
+## space. Lets us auto-size an arbitrary downloaded model without magic numbers.
+static func combined_aabb(root: Node3D) -> AABB:
+	var acc := AABB()
+	var has := false
+	var inv := root.global_transform.affine_inverse()
+	for node in root.find_children("*", "MeshInstance3D", true, false):
+		var mi := node as MeshInstance3D
+		if mi.mesh == null:
+			continue
+		var box: AABB = (inv * mi.global_transform) * mi.mesh.get_aabb()
+		if not has:
+			acc = box
+			has = true
+		else:
+			acc = acc.merge(box)
+	return acc
+
+## Uniformly scale a freshly-instanced model so its LONGEST dimension is
+## `target_max` units, then seat it so its lowest point rests at y = 0. Works for
+## any model regardless of the units it was authored in. Call before parenting
+## transforms are set (expects the instance already in the tree).
+static func fit_to_size(inst: Node3D, target_max: float) -> void:
+	if inst == null:
+		return
+	var box := combined_aabb(inst)
+	var dim: float = maxf(box.size.x, maxf(box.size.y, box.size.z))
+	if dim <= 0.0001:
+		return
+	var sc := target_max / dim
+	inst.scale = Vector3(sc, sc, sc)
+	inst.position.y = -box.position.y * sc
+
+## Force every animation on this player to loop (imported glTF clips often
+## default to play-once, which looks like a freeze for walk/run/idle).
+static func set_all_loop(ap: AnimationPlayer) -> void:
+	if ap == null:
+		return
+	for anim_name in ap.get_animation_list():
+		var a := ap.get_animation(anim_name)
+		if a:
+			a.loop_mode = Animation.LOOP_LINEAR
+
 ## Turn a region/display name into a texture filename slug, e.g.
 ## "The Olive Plains" -> "olive_plains" (drops a leading "the ").
 static func slugify(display_name: String) -> String:

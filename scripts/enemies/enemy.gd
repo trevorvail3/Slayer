@@ -34,6 +34,12 @@ const KNOCKBACK_DECAY := 22.0
 const DEAGGRO_MULT := 2.0
 const WANDER_SPEED_FRAC := 0.35
 
+## Optional downloaded model per archetype: beasts try the Fox first and fall
+## back to the procedural box-rig if the file isn't present. Auto-fitted in code.
+const BEAST_MODEL_PATH := "res://assets/models/Fox.glb"
+## If a loaded creature faces away from where it's moving, flip this to PI.
+const MODEL_FACE_YAW := 0.0
+
 var health: int
 var max_health: int
 var loot_table: LootTable
@@ -60,6 +66,9 @@ var _r_arm: Node3D
 var _l_leg: Node3D
 var _r_leg: Node3D
 var _legs: Array = []           # beast legs: [fl, fr, bl, br]
+var _model: Node3D              # loaded .glb creature (null = using box-rig)
+var _anim: AnimationPlayer      # its AnimationPlayer, if any
+var _use_model := false
 var _anim_t := 0.0
 var _walk_phase := 0.0
 var _attack_cd := 0.0
@@ -168,7 +177,8 @@ func _build() -> void:
 	_body = Node3D.new()
 	add_child(_body)
 	if kind == Kind.BEAST:
-		_build_beast(body_scale)
+		if not _build_beast_model(body_scale):
+			_build_beast(body_scale)
 	else:
 		_build_humanoid(body_scale)
 
@@ -222,6 +232,22 @@ func _build_beast(s: float) -> void:
 	]
 	for l in _legs:
 		_body.add_child(l)
+
+## Try to build the beast from a real downloaded model (auto-fitted + animated).
+## Returns false if no model file is present, so the caller falls back to boxes.
+func _build_beast_model(s: float) -> bool:
+	var inst := AssetLoader.instance_model(BEAST_MODEL_PATH)
+	if inst == null:
+		return false
+	_body.add_child(inst)
+	AssetLoader.fit_to_size(inst, 2.4 * s)   # longest dimension ~ beast length
+	inst.rotation.y = MODEL_FACE_YAW
+	_model = inst
+	_anim = AssetLoader.find_anim_player(inst)
+	AssetLoader.set_all_loop(_anim)
+	AssetLoader.play_anim(_anim, ["survey", "idle"])
+	_use_model = true
+	return true
 
 func _part(size: Vector3, pos: Vector3) -> MeshInstance3D:
 	var m := MeshInstance3D.new()
@@ -468,6 +494,9 @@ func _animate_humanoid(delta: float, hspeed: float) -> void:
 		_r_arm.rotation.x = lerp_angle(_r_arm.rotation.x, -idle, delta * 6.0)
 
 func _animate_beast(delta: float, hspeed: float) -> void:
+	if _use_model:
+		_animate_beast_model(hspeed)
+		return
 	if _legs.size() < 4:
 		return
 	if _windup_t > 0.0:
@@ -489,6 +518,19 @@ func _animate_beast(delta: float, hspeed: float) -> void:
 		for i in _legs.size():
 			var l := _legs[i] as Node3D
 			l.rotation.x = lerp_angle(l.rotation.x, idle * (1 if i % 2 == 0 else -1), delta * 6.0)
+
+## Drive the loaded creature's own clips from movement state.
+func _animate_beast_model(hspeed: float) -> void:
+	if _anim == null:
+		return
+	if _windup_t > 0.0:
+		AssetLoader.play_anim(_anim, ["survey", "idle"])
+	elif hspeed > 3.0:
+		AssetLoader.play_anim(_anim, ["run", "gallop"])
+	elif hspeed > 0.6:
+		AssetLoader.play_anim(_anim, ["walk", "trot"])
+	else:
+		AssetLoader.play_anim(_anim, ["survey", "idle"])
 
 # --- Damage / reactions ---
 
@@ -561,6 +603,8 @@ func die() -> void:
 	if _dead:
 		return
 	_dead = true
+	if _anim:
+		_anim.pause()                        # freeze the creature's clip mid-topple
 	remove_from_group("enemy")               # stop counting toward spawns immediately
 	set_deferred("collision_layer", 0)        # let the player walk through the corpse
 	if _bar:
