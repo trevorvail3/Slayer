@@ -66,12 +66,13 @@ func _make_column(parent: HBoxContainer, heading: String) -> VBoxContainer:
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var h := Label.new()
 	h.text = heading
-	h.add_theme_font_size_override("font_size", 22)
+	UITheme.style_title(h, 22)
 	col.add_child(h)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	var box := VBoxContainer.new()
 	box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	box.add_theme_constant_override("separation", 6)
 	scroll.add_child(box)
 	col.add_child(scroll)
 	parent.add_child(col)
@@ -91,10 +92,7 @@ func _refresh() -> void:
 		_stash_box.add_child(_item_button(item, false))
 
 func _item_button(item: ItemData, in_backpack: bool) -> Button:
-	var b := Button.new()
-	b.text = "[%s] %s  ·  Pow %d" % [item.rarity.name, item.name, item.power]
-	b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	b.add_theme_color_override("font_color", item.display_color())
+	var b := UIWidgets.item_button(item)
 	if in_backpack:
 		b.pressed.connect(_store.bind(item))
 	else:

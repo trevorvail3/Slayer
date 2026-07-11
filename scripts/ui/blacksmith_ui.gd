@@ -149,10 +149,7 @@ func _refresh() -> void:
 	if not items.has(_selected):
 		_selected = null
 	for item in items:
-		var b := Button.new()
-		b.text = "[%s] %s  ·  Pow %d" % [item.rarity.name, item.name, item.power]
-		b.alignment = HORIZONTAL_ALIGNMENT_LEFT
-		b.add_theme_color_override("font_color", item.display_color())
+		var b := UIWidgets.item_button(item)
 		b.pressed.connect(_select.bind(item))
 		_list.add_child(b)
 

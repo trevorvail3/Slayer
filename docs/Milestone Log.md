@@ -185,5 +185,9 @@ Groundwork to make it read like a real game (see [[Art Pipeline]]).
   currencies panel top-right, and objective + Cinzel region-banner top-center.
   Dark text outlines keep it legible over the bright sky. Same public API
   (`notify`/`set_objective`/`show_region`), so hub/zone are unchanged.
-  - *Next phases:* in-menu polish pass, in-world guided-steps tutorial.
+- **UI overhaul — Phase 3 (menu polish):** shared `UIWidgets` (rarity-tinted item
+  rows with a colored edge, one canonical item-text line with a ★ god-roll mark,
+  glass "section" panels). Inventory rebuilt into EQUIPPED / STATS / BACKPACK glass
+  sections with tinted rows; forge and vault item lists use the same tiles.
+  - *Next phase:* in-world guided-steps tutorial.
 
