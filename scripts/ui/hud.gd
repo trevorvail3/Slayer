@@ -1,22 +1,31 @@
 class_name HUD
 extends CanvasLayer
 
-## Heads-up display: crosshair, Power Level, a health bar, and a loot toast that
-## pops when you pick something up.
+## Heads-up display, Destiny-style clustered layout:
+##  - bottom-left:   vitals (class · POWER, health, stamina)
+##  - bottom-center: super meter + ability chips (Move / Ability / Super)
+##  - top-center:    objective line + big region-discovery banner
+##  - top-right:     currencies & materials (glass panel)
+##  - center:        crosshair; a transient loot/notify toast lower-center
+## Public API used by hub/zone: notify(), set_objective(), show_region().
 
 var power_label: Label
 var health_bar: ProgressBar
 var stamina_bar: ProgressBar
 var block_label: Label
-var toast: Label
-var objective_label: Label
-var resource_label: Label
 var class_label: Label
 var super_bar: ProgressBar
-var ability_label: Label
+var objective_label: Label
+var resource_label: Label
 var region_box: VBoxContainer
 var region_title: Label
 var region_sub: Label
+var toast: Label
+
+var _hp_label: Label
+var _move_chip: Dictionary
+var _abil_chip: Dictionary
+var _super_chip: Dictionary
 var _region_tween: Tween
 var _toast_timer := 0.0
 
@@ -36,74 +45,134 @@ func _build() -> void:
 	var root := Control.new()
 	root.set_anchors_preset(Control.PRESET_FULL_RECT)
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.theme = UITheme.get_theme()
 	add_child(root)
 
+	_build_crosshair(root)
+	_build_vitals(root)
+	_build_abilities(root)
+	_build_top(root)
+	_build_resources(root)
+	_build_toast(root)
+
+func _build_crosshair(root: Control) -> void:
 	var cross := Label.new()
 	cross.text = "+"
-	cross.add_theme_font_size_override("font_size", 28)
+	cross.add_theme_font_size_override("font_size", 22)
+	cross.modulate = Color(1, 1, 1, 0.55)
 	cross.set_anchors_preset(Control.PRESET_CENTER)
-	cross.position -= Vector2(8, 18)
+	cross.position = Vector2(-7, -16)
+	cross.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root.add_child(cross)
 
+func _build_vitals(root: Control) -> void:
+	var panel := PanelContainer.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(panel)
+	panel.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT, Control.PRESET_MODE_MINSIZE, 22)
+
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 6)
+	panel.add_child(v)
+
+	var top := HBoxContainer.new()
+	v.add_child(top)
+	class_label = Label.new()
+	UITheme.style_title(class_label, 18, Color("cfc0ff"))
+	top.add_child(class_label)
+	var sp := Control.new()
+	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	sp.custom_minimum_size = Vector2(40, 0)
+	top.add_child(sp)
 	power_label = Label.new()
-	power_label.position = Vector2(20, 18)
-	power_label.add_theme_font_size_override("font_size", 24)
-	root.add_child(power_label)
+	UITheme.style_title(power_label, 20, UITheme.GOLD)
+	top.add_child(power_label)
 
-	health_bar = ProgressBar.new()
-	health_bar.position = Vector2(20, 56)
-	health_bar.custom_minimum_size = Vector2(240, 22)
-	health_bar.size = Vector2(240, 22)
-	health_bar.max_value = 100
-	health_bar.value = 100
-	health_bar.show_percentage = false
-	root.add_child(health_bar)
+	health_bar = _bar(v, Vector2(320, 20), UITheme.HEALTH)
+	_hp_label = Label.new()
+	_hp_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_hp_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_hp_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_hp_label.add_theme_font_size_override("font_size", 13)
+	_hp_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_outline(_hp_label, 3)
+	health_bar.add_child(_hp_label)
 
-	stamina_bar = ProgressBar.new()
-	stamina_bar.position = Vector2(20, 84)
-	stamina_bar.custom_minimum_size = Vector2(180, 12)
-	stamina_bar.size = Vector2(180, 12)
-	stamina_bar.max_value = 100
-	stamina_bar.value = 100
-	stamina_bar.show_percentage = false
-	var stam_fill := StyleBoxFlat.new()
-	stam_fill.bg_color = Color("d9b13b")
-	stamina_bar.add_theme_stylebox_override("fill", stam_fill)
-	root.add_child(stamina_bar)
+	stamina_bar = _bar(v, Vector2(320, 8), UITheme.STAMINA)
 
 	block_label = Label.new()
-	block_label.position = Vector2(20, 100)
-	block_label.add_theme_font_size_override("font_size", 18)
-	block_label.add_theme_color_override("font_color", Color("7fb0ff"))
-	block_label.text = ""
-	root.add_child(block_label)
+	block_label.text = "◤ BLOCKING"
+	block_label.add_theme_font_size_override("font_size", 15)
+	block_label.add_theme_color_override("font_color", Color("9fd0ff"))
+	block_label.visible = false
+	v.add_child(block_label)
 
-	class_label = Label.new()
-	class_label.position = Vector2(20, 124)
-	class_label.add_theme_font_size_override("font_size", 18)
-	class_label.add_theme_color_override("font_color", Color("cfc0ff"))
-	root.add_child(class_label)
+func _bar(parent: Control, size: Vector2, fill: Color) -> ProgressBar:
+	var b := ProgressBar.new()
+	b.custom_minimum_size = size
+	b.max_value = 100
+	b.value = 100
+	b.show_percentage = false
+	b.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_theme_stylebox_override("fill", UITheme.bar_fill(fill))
+	parent.add_child(b)
+	return b
+
+func _build_abilities(root: Control) -> void:
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(col)
+	col.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM, Control.PRESET_MODE_MINSIZE, 22)
 
 	super_bar = ProgressBar.new()
-	super_bar.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	super_bar.position = Vector2(-160, -70)
-	super_bar.custom_minimum_size = Vector2(320, 14)
-	super_bar.size = Vector2(320, 14)
+	super_bar.custom_minimum_size = Vector2(380, 8)
 	super_bar.max_value = 100
 	super_bar.value = 0
 	super_bar.show_percentage = false
-	var super_fill := StyleBoxFlat.new()
-	super_fill.bg_color = Color("ffcf6a")
-	super_bar.add_theme_stylebox_override("fill", super_fill)
-	root.add_child(super_bar)
+	super_bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	super_bar.add_theme_stylebox_override("fill", UITheme.bar_fill(UITheme.SUPER))
+	col.add_child(super_bar)
 
-	ability_label = Label.new()
-	ability_label.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	ability_label.position = Vector2(-200, -48)
-	ability_label.add_theme_font_size_override("font_size", 16)
-	root.add_child(ability_label)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 10)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	col.add_child(row)
+	_move_chip = _make_chip(row)
+	_abil_chip = _make_chip(row)
+	_super_chip = _make_chip(row)
 
-	# Destiny-style region-discovery banner (fades in/out on area change).
+func _make_chip(parent: Control) -> Dictionary:
+	var p := PanelContainer.new()
+	p.custom_minimum_size = Vector2(122, 0)
+	p.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(p)
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 0)
+	p.add_child(v)
+	var nm := Label.new()
+	nm.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	nm.add_theme_font_size_override("font_size", 15)
+	v.add_child(nm)
+	var sub := Label.new()
+	sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	sub.add_theme_font_size_override("font_size", 12)
+	sub.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+	v.add_child(sub)
+	return {"panel": p, "name": nm, "sub": sub}
+
+func _build_top(root: Control) -> void:
+	objective_label = Label.new()
+	objective_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
+	objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	objective_label.offset_top = 22
+	objective_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	objective_label.add_theme_font_size_override("font_size", 20)
+	objective_label.add_theme_color_override("font_color", UITheme.GOLD)
+	_outline(objective_label, 4)
+	root.add_child(objective_label)
+
 	region_box = VBoxContainer.new()
 	region_box.set_anchors_preset(Control.PRESET_TOP_WIDE)
 	region_box.offset_top = 120
@@ -111,41 +180,46 @@ func _build() -> void:
 	region_box.modulate.a = 0.0
 	region_title = Label.new()
 	region_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	UITheme.style_title(region_title, 44, UITheme.TEXT)
+	UITheme.style_title(region_title, 46, UITheme.TEXT)
+	_outline(region_title, 5)
 	region_box.add_child(region_title)
 	region_sub = Label.new()
 	region_sub.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	region_sub.add_theme_font_size_override("font_size", 18)
-	region_sub.add_theme_color_override("font_color", Color("a89a7a"))
+	region_sub.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+	_outline(region_sub, 3)
 	region_box.add_child(region_sub)
 	root.add_child(region_box)
 
+func _build_resources(root: Control) -> void:
+	var panel := PanelContainer.new()
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_child(panel)
+	panel.set_anchors_and_offsets_preset(Control.PRESET_TOP_RIGHT, Control.PRESET_MODE_MINSIZE, 20)
+	resource_label = Label.new()
+	resource_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	resource_label.add_theme_font_size_override("font_size", 15)
+	resource_label.add_theme_color_override("font_color", Color("e6d29a"))
+	resource_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.add_child(resource_label)
+
+func _build_toast(root: Control) -> void:
 	toast = Label.new()
-	toast.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
-	toast.position -= Vector2(180, 90)
+	toast.anchor_left = 0.0
+	toast.anchor_right = 1.0
+	toast.anchor_top = 0.62
+	toast.anchor_bottom = 0.62
+	toast.grow_vertical = Control.GROW_DIRECTION_BOTH
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	toast.add_theme_font_size_override("font_size", 22)
+	_outline(toast, 4)
 	root.add_child(toast)
 
-	objective_label = Label.new()
-	objective_label.set_anchors_preset(Control.PRESET_TOP_WIDE)
-	objective_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	objective_label.offset_top = 54
-	objective_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	objective_label.add_theme_font_size_override("font_size", 22)
-	objective_label.add_theme_color_override("font_color", Color("e6c86a"))
-	objective_label.text = ""
-	root.add_child(objective_label)
-
-	resource_label = Label.new()
-	resource_label.set_anchors_preset(Control.PRESET_TOP_RIGHT)
-	resource_label.grow_horizontal = Control.GROW_DIRECTION_BEGIN
-	resource_label.position = Vector2(-20, 18)
-	resource_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	resource_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	resource_label.add_theme_font_size_override("font_size", 18)
-	resource_label.add_theme_color_override("font_color", Color("e6d29a"))
-	resource_label.text = ""
-	root.add_child(resource_label)
+## Dark outline so HUD text stays legible over bright sky/terrain.
+func _outline(label: Label, size: int) -> void:
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	label.add_theme_constant_override("outline_size", size)
 
 ## Big fading "area discovered" banner.
 func show_region(title: String, sub: String = "") -> void:
@@ -174,17 +248,17 @@ func notify(text: String, color := Color(0.9, 0.9, 0.9)) -> void:
 
 func _refresh_resources() -> void:
 	if resource_label:
-		resource_label.text = "Gold %d    Wood %d    Stone %d    Iron %d    Ember %d    Shard %d    Relics %d" % [
+		resource_label.text = "%d Gold\nWood %d   Stone %d   Iron %d\nEmber %d   Shard %d   Relics %d" % [
 			GameState.gold, GameState.resources.get("wood", 0),
 			GameState.resources.get("stone", 0), GameState.resources.get("iron", 0),
 			GameState.resources.get("emberdust", 0), GameState.resources.get("godshard", 0),
 			GameState.relics_found]
 
 func _refresh() -> void:
-	power_label.text = "POWER  %d" % GameState.gear_score()
+	power_label.text = "POWER %d" % GameState.gear_score()
 
 func _on_loot(item: ItemData) -> void:
-	toast.text = "%s  %s  (Pow %d)" % [item.rarity.name, item.name, item.power]
+	toast.text = "%s   %s   (Pow %d)" % [item.rarity.name, item.name, item.power]
 	toast.add_theme_color_override("font_color", item.display_color())
 	_toast_timer = 3.0
 
@@ -198,17 +272,34 @@ func _process(delta: float) -> void:
 	if p:
 		health_bar.max_value = PlayerStats.max_health()
 		health_bar.value = p.health
+		_hp_label.text = "%d / %d" % [maxi(0, int(p.health)), int(PlayerStats.max_health())]
 		stamina_bar.max_value = PlayerStats.max_stamina()
 		stamina_bar.value = p.stamina
-		block_label.text = "◤ BLOCKING" if p.blocking else ""
+		block_label.visible = p.blocking
 		_update_class_hud(p)
 
 func _update_class_hud(p: Player) -> void:
 	var d := ClassDefs.get_def(GameState.player_class)
-	class_label.text = String(d["name"])
+	class_label.text = String(d["name"]).to_upper()
 	super_bar.value = p.super_energy
-	var move_txt := "%s [Shift]%s" % [d["move_name"], "" if p.move_cd <= 0.0 else " (%d)" % ceili(p.move_cd)]
-	var abil_txt := "%s [Q]%s" % [d["ability_name"], "" if p.ability_cd <= 0.0 else " (%d)" % ceili(p.ability_cd)]
-	var super_txt := "%s [F] READY!" % d["super_name"] if p.super_energy >= 100.0 else "Super %d%%" % int(p.super_energy)
-	ability_label.text = "%s      %s      %s" % [move_txt, abil_txt, super_txt]
-	ability_label.add_theme_color_override("font_color", Color("ffe08a") if p.super_energy >= 100.0 else Color("d8d8d8"))
+
+	_set_chip(_move_chip, String(d["move_name"]), "Shift", p.move_cd, false)
+	_set_chip(_abil_chip, String(d["ability_name"]), "Q", p.ability_cd, false)
+	var super_ready := p.super_energy >= 100.0
+	_set_chip(_super_chip, String(d["super_name"]), "F", 0.0, super_ready)
+	_super_chip["sub"].text = "READY [F]" if super_ready else "%d%%" % int(p.super_energy)
+
+## Update one ability chip: name, key/cooldown, and ready/on-cooldown styling.
+func _set_chip(chip: Dictionary, name_text: String, key: String, cd: float, ready: bool) -> void:
+	var nm: Label = chip["name"]
+	var sub: Label = chip["sub"]
+	var panel: PanelContainer = chip["panel"]
+	nm.text = name_text
+	if cd > 0.0:
+		sub.text = "%ds" % ceili(cd)
+		panel.modulate = Color(1, 1, 1, 0.45)
+		nm.add_theme_color_override("font_color", UITheme.TEXT_DIM)
+	else:
+		sub.text = "[%s]" % key
+		panel.modulate = Color(1, 1, 1, 1)
+		nm.add_theme_color_override("font_color", UITheme.GOLD if ready else UITheme.TEXT)

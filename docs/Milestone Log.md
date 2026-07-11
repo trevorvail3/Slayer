@@ -178,5 +178,12 @@ Groundwork to make it read like a real game (see [[Art Pipeline]]).
   - **Story intro** (`story_intro.gd`) — the creation myth as a fading opening
     after New Game, then into the world.
   - `Game.new_game(kind)` / `continue_game()` + `GameState.reset_new_game()`.
-  - *Next phases:* HUD overhaul, in-menu polish pass, in-world guided-steps tutorial.
+- **UI overhaul — Phase 2 (HUD):** rebuilt the flat absolute-positioned HUD into
+  anchored, glass-paneled clusters — vitals bottom-left (class · POWER, health
+  with numeric overlay, stamina), a super meter + **ability chips** (Move/Ability/
+  Super with keybind + live cooldowns, dim when charging) bottom-center, a
+  currencies panel top-right, and objective + Cinzel region-banner top-center.
+  Dark text outlines keep it legible over the bright sky. Same public API
+  (`notify`/`set_objective`/`show_region`), so hub/zone are unchanged.
+  - *Next phases:* in-menu polish pass, in-world guided-steps tutorial.
 
